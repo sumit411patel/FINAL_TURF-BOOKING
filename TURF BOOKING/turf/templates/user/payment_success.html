@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %} Booking Confirmed! {% endblock %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  .success-section {
+    background: #f4f6f8;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    padding: 60px 0;
+  }
+
+  .success-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.10);
+    padding: 60px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .success-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #198754, #20c997);
+  }
+
+  /* ── Success icon ──────────────────────────────────── */
+  .success-icon-wrap {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #198754, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    box-shadow: 0 8px 24px rgba(25,135,84,0.35);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .success-icon-wrap .fa {
+    font-size: 3rem;
+    color: #fff;
+  }
+
+  /* ── Text ───────────────────────────────────────────── */
+  .success-card h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+  }
+
+  .success-card .sub-msg {
+    color: #6c757d;
+    font-size: 1rem;
+    margin-bottom: 34px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Info strip ──────────────────────────────────────── */
+  .info-strip {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 38px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .info-item .icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #edfbf3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .info-item .icon-circle .fa {
+    font-size: 1.2rem;
+    color: #198754;
+  }
+
+  .info-item .info-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #aaa;
+  }
+
+  .info-item .info-val {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  /* ── Action buttons ─────────────────────────────────── */
+  .action-btns {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-bookings {
+    background: #198754;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 30px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(25,135,84,0.3);
+  }
+
+  .btn-bookings:hover {
+    background: #157347;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  .btn-home {
+    background: transparent;
+    color: #198754;
+    border: 2px solid #198754;
+    border-radius: 30px;
+    padding: 12px 30px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-home:hover {
+    background: #198754;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  /* ── Confetti dots ──────────────────────────────────── */
+  .confetti-dot {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.18;
+    animation: floatDot 6s infinite ease-in-out;
+  }
+  @keyframes floatDot {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-20px); }
+  }
+</style>
+
+<!-- Breadcrumb -->
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Booking Confirmed</h2>
+      <p><a href="/index">Home</a> / Payment Success</p>
+    </div>
+  </div>
+</section>
+
+<section class="success-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-9">
+        <div class="success-card">
+
+          <!-- Floating decorative dots -->
+          <div class="confetti-dot" style="width:80px;height:80px;background:#198754;top:-20px;left:-20px;"></div>
+          <div class="confetti-dot" style="width:50px;height:50px;background:#20c997;bottom:-10px;right:-10px;animation-delay:2s;"></div>
+
+          <!-- Success icon -->
+          <div class="success-icon-wrap">
+            <span class="fa fa-check"></span>
+          </div>
+
+          <h2>Booking Confirmed!</h2>
+          <p class="sub-msg">
+            Your turf slot has been successfully booked and payment has been received.
+            You're all set to play!
+          </p>
+
+          <!-- Info strip -->
+          <div class="info-strip">
+            <div class="info-item">
+              <div class="icon-circle"><span class="fa fa-credit-card"></span></div>
+              <div class="info-label">Payment</div>
+              <div class="info-val">Razorpay</div>
+            </div>
+            <div class="info-item">
+              <div class="icon-circle"><span class="fa fa-check-circle"></span></div>
+              <div class="info-label">Status</div>
+              <div class="info-val" style="color:#198754;">Complete</div>
+            </div>
+            <div class="info-item">
+              <div class="icon-circle"><span class="fa fa-calendar-check-o"></span></div>
+              <div class="info-label">Booking</div>
+              <div class="info-val">Confirmed</div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="action-btns">
+            <a href="/userbookings" class="btn-bookings">
+              <span class="fa fa-list-alt"></span> View My Bookings
+            </a>
+            <a href="/index" class="btn-home">
+              <span class="fa fa-home"></span> Back to Home
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

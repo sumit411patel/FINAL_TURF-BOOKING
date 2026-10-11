@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% block title %} Complete Payment – {{ turfdata.name }} {% endblock %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  /* ── Page ─────────────────────────────────────────── */
+  .payment-section {
+    background: #f4f6f8;
+    min-height: 80vh;
+    padding: 50px 0;
+  }
+
+  .payment-wrap {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.10);
+    overflow: hidden;
+  }
+
+  /* ── Header stripe — project native style ──────────── */
+  .payment-header {
+    position: relative;
+    z-index: 0;
+    padding: 42px 40px 38px;
+    background: url('/static/assets/images/golf9.jpg') center top / cover no-repeat;
+    color: #fff;
+    border-radius: 0;       /* card overflow:hidden handles corners */
+  }
+
+  /* Same dark overlay as .booking-form-61:before */
+  .payment-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 10, 12, 0.72);
+    z-index: -1;
+  }
+
+  .payment-header h3 {
+    font-family: 'Spartan', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+
+  .payment-header p {
+    font-family: 'Spartan', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    opacity: 0.80;
+    margin: 0;
+    color: #fff;
+  }
+
+  .payment-header .secure-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    margin-top: 14px;
+    color: #fff;
+  }
+
+  /* ── Body ──────────────────────────────────────────── */
+  .payment-body {
+    padding: 36px;
+  }
+
+  /* ── Booking summary card ──────────────────────────── */
+  .summary-card {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 28px;
+    border: 1.5px solid #e9ecef;
+  }
+
+  .summary-card h5 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #888;
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.93rem;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-row .label { color: #666; }
+  .summary-row .value { font-weight: 600; color: #1a1a2e; }
+  .summary-row.total-row .label { font-weight: 700; color: #1a1a2e; font-size: 1rem; }
+  .summary-row.total-row .value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #198754;
+  }
+
+  /* ── Payment method block ───────────────────────────── */
+  .method-block {
+    border: 2px solid #198754;
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    background: #edfbf3;
+  }
+
+  .method-block .rzp-logo {
+    height: 36px;
+    filter: none;
+  }
+
+  .method-block .method-info h6 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 2px;
+  }
+
+  .method-block .method-info p {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+  }
+
+  .method-check {
+    margin-left: auto;
+    background: #198754;
+    color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── Pay button ─────────────────────────────────────── */
+  .btn-pay {
+    width: 100%;
+    background: linear-gradient(135deg, #198754, #157347);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(25,135,84,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-pay:hover {
+    background: linear-gradient(135deg, #157347, #0f5132);
+    box-shadow: 0 6px 22px rgba(25,135,84,0.45);
+    transform: translateY(-2px);
+  }
+
+  .btn-pay .rzp-icon {
+    height: 22px;
+    filter: brightness(0) invert(1);
+  }
+
+  /* ── Trust badges ───────────────────────────────────── */
+  .trust-strip {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #888;
+  }
+
+  .trust-item .fa { color: #198754; }
+</style>
+
+<!-- Breadcrumb -->
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Secure Checkout</h2>
+      <p>
+        <a href="/index">Home</a> /
+        <a href="/userturflist">Turfs</a> /
+        <a href="/turfdetails/{{ turfid }}">{{ turfdata.name }}</a> /
+        Payment
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="payment-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-9">
+        <div class="payment-wrap">
+
+          <!-- Header -->
+          <div class="payment-header">
+            <h3><span class="fa fa-lock" style="margin-right:10px;"></span>Secure Payment</h3>
+            <p>Complete your turf booking safely via Razorpay</p>
+          </div>
+
+          <!-- Body -->
+          <div class="payment-body">
+
+            <!-- Booking Summary -->
+            <div class="summary-card">
+              <h5><span class="fa fa-clipboard-list" style="margin-right:6px;color:#198754;"></span>Booking Summary</h5>
+              <div class="summary-row">
+                <span class="label">Turf</span>
+                <span class="value">{{ turfdata.name }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Category</span>
+                <span class="value">{{ turfdata.category }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Date</span>
+                <span class="value">{{ slotdata.date }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Time Slot</span>
+                <span class="value">{{ slotdata.start_time|time:"g:i A" }} – {{ slotdata.end_time|time:"g:i A" }}</span>
+              </div>
+              <div class="summary-row total-row" style="margin-top:8px;padding-top:12px;border-top:2px solid #e9ecef;">
+                <span class="label">Total Amount</span>
+                <span class="value">&#8377; {{ amount_inr }}</span>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="method-block">
+              <img src="https://razorpay.com/favicon.png" alt="Razorpay" class="rzp-logo">
+              <div class="method-info">
+                <h6>Pay via Razorpay</h6>
+                <p>UPI, Cards, Net Banking, Wallets &amp; more</p>
+              </div>
+              <div class="method-check"><span class="fa fa-check"></span></div>
+            </div>
+
+            <!-- Hidden form for verify_payment -->
+            <form id="razorpayCallbackForm" action="/verify_payment" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="razorpay_payment_id" id="rzp_payment_id">
+              <input type="hidden" name="razorpay_order_id"   id="rzp_order_id">
+              <input type="hidden" name="razorpay_signature"  id="rzp_signature">
+              <input type="hidden" name="turfid"  value="{{ turfid }}">
+              <input type="hidden" name="slotid"  value="{{ slotid }}">
+            </form>
+
+            <!-- Pay Now Button -->
+            <button onclick="openRazorpay()" class="btn-pay" id="payBtn"
+              data-key="{{ razorpay_key }}"
+              data-amount="{{ amount_inr }}"
+              data-name="EZ Turfs"
+              data-description="Turf Booking – {{ turfdata.name }}"
+              data-order-id="{{ razorpay_order_id }}"
+              data-prefill-name="{{ user_name }}"
+              data-prefill-email="{{ user_email }}"
+              data-prefill-contact="{{ user_phone }}"
+            >
+              <span class="fa fa-bolt"></span>
+              Pay &#8377;{{ amount_inr }} Now
+            </button>
+
+            <!-- Trust strip -->
+            <div class="trust-strip">
+              <div class="trust-item"><span class="fa fa-lock"></span> Secure Payment</div>
+              <div class="trust-item"><span class="fa fa-undo"></span> Instant Confirmation</div>
+              <div class="trust-item"><span class="fa fa-headset"></span> 24/7 Support</div>
+            </div>
+
+          </div><!-- /payment-body -->
+        </div><!-- /payment-wrap -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Razorpay Checkout JS -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  function openRazorpay() {
+    var btn    = document.getElementById('payBtn');
+    var key    = btn.getAttribute('data-key');
+    var amount = parseInt(btn.getAttribute('data-amount'), 10) * 100;
+    var desc   = btn.getAttribute('data-description');
+    var orderId  = btn.getAttribute('data-order-id');
+    var userName = btn.getAttribute('data-prefill-name');
+    var userEmail = btn.getAttribute('data-prefill-email');
+    var userPhone = 9974008387;
+    var amountDisplay = btn.getAttribute('data-amount');
+
+    var options = {
+      key:         key,
+      amount:      amount,
+      currency:    'INR',
+      name:        'EZ Turfs',
+      description: desc,
+      order_id:    orderId,
+      prefill: {
+        name:    userName,
+        email:   userEmail,
+        contact: userPhone
+      },
+      theme: {
+        color: '#198754'
+      },
+      "method": {
+                upi: true,      
+                card: true,    
+                netbanking: true, 
+                wallet: true,  
+                emi: false,
+                paylater: false     
+      },
+      handler: function (response) {
+        document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+        document.getElementById('rzp_order_id').value   = response.razorpay_order_id;
+        document.getElementById('rzp_signature').value  = response.razorpay_signature;
+        document.getElementById('razorpayCallbackForm').submit();
+      },
+      modal: {
+        ondismiss: function () {
+          btn.innerHTML = '<span class="fa fa-bolt"></span> Pay \u20B9' + amountDisplay + ' Now';
+        }
+      }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.on('payment.failed', function (response) {
+      alert('Payment failed: ' + response.error.description + '. Please try again.');
+    });
+    rzp.open();
+  }
+</script>
+
+{% endblock %}

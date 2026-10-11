@@ -1,0 +1,263 @@
+{% extends 'base.html'%}
+{% block title %} Add Turf {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .error-msg {
+    color: red;
+    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+  }
+  .submit-error {
+    color: red;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: none;
+  }
+  /* image upload */
+  .img-upload-label {
+    display: block;
+    border: 2px dashed #adb5bd;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #666;
+    transition: border-color 0.2s;
+    margin-top: 6px;
+  }
+  .img-upload-label:hover { border-color: #888; }
+  .img-upload-label span { font-size: 13px; display: block; margin-top: 4px; color: #999; }
+  #imgPreview { display:none; width:100%; max-height:180px; object-fit:cover; border-radius:6px; margin-top:10px; }
+  /* optional label */
+  .opt-tag {
+    display: inline-block;
+    background: #e9ecef;
+    color: #888;
+    font-size: 11px;
+    border-radius: 10px;
+    padding: 1px 8px;
+    margin-left: 6px;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+  /* section divider */
+  .field-section-title {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #aaa;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Add Turf</h2>
+      <p><a href="/index">Home</a> / <a href="/turflist">My Turfs</a> / Add Turf</p>
+    </div>
+  </div>
+</section>
+
+<section class="w3l-booking-top">
+  <div class="booking-form-61 p-5">
+    <div class="container">
+      <div class="booking-top-gds">
+
+        <!-- Left info panel -->
+        <div class="booking-forms-16-info align-self">
+          <h5>Manager Panel</h5>
+          <h3 class="title-big">List your turf and start receiving bookings from players near you.</h3>
+          <p style="margin-top:14px; color:#bbb; font-size:0.9rem;">Fill in your turf details, upload a photo and your listing will go live immediately.</p>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="form-right-inf">
+          <div class="booking-form-content">
+            <h6>Add New Turf</h6>
+
+            {% if messages %}
+            <div style="margin-bottom:12px;">
+              {% for message in messages %}
+              <div style="background:{% if message.tags == 'error' %}#ffe0e0{% else %}#e0ffe8{% endif %};border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:6px;color:{% if message.tags == 'error' %}#c0392b{% else %}#1e7a3d{% endif %};">
+                {{ message }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <form action="/addturf" method="post" enctype="multipart/form-data" id="addTurfForm" class="book-depature-6" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="manager" value="{{ uid }}">
+
+              <div class="d-grid grid-col-2">
+
+                <!-- ── Basic Info ── -->
+                <div class="field-section-title">Basic Information</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Turf Name *</h5>
+                  <input type="text" name="name" id="f-name" placeholder="e.g. Green Field Arena"
+                    value="{{ filled.name }}" required>
+                  <span class="error-msg" id="e-name"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Category *</h5>
+                  <select name="category" id="f-cat" required>
+                    <option value="" disabled {% if not filled.category %}selected{% endif %}>Select Category</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if filled.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.cate_name }}</option>
+                    {% endfor %}
+                  </select>
+                  <span class="error-msg" id="e-cat"></span>
+                </div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  <h5>Description *</h5>
+                  <textarea name="description" id="f-desc" placeholder="Describe your turf, amenities, surface…" rows="3" required>{{ filled.description }}</textarea>
+                  <span class="error-msg" id="e-desc"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Location *</h5>
+                  <select name="location" id="f-loc" required>
+                    <option value="" disabled {% if not filled.location %}selected{% endif %}>Select Location</option>
+                    {% for loc in locations %}
+                    <option value="{{ loc.id }}" {% if filled.location == loc.id|stringformat:"s" %}selected{% endif %}>{{ loc.area_name }}</option>
+                    {% endfor %}
+                  </select>
+                  <span class="error-msg" id="e-loc"></span>
+                </div>
+
+                <!-- ── Contact ── -->
+                <div class="field-section-title">Contact Details</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Contact Number *</h5>
+                  <input type="text" name="contact_number" id="f-phone" placeholder="10-digit number"
+                    maxlength="10" value="{{ filled.contact_number }}" required>
+                  <span class="error-msg" id="e-phone"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Contact Email *</h5>
+                  <input type="email" name="contact_email" id="f-email" placeholder="turf@example.com"
+                    value="{{ filled.contact_email }}" required>
+                  <span class="error-msg" id="e-email"></span>
+                </div>
+
+                <!-- ── Pricing ── -->
+                <div class="field-section-title">Pricing & Capacity</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Price Per Slot (₹) *</h5>
+                  <input type="number" name="price_per_slot" id="f-price" placeholder="e.g. 500"
+                    min="1" value="{{ filled.price_per_slot }}" required>
+                  <span class="error-msg" id="e-price"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Max Capacity *</h5>
+                  <input type="number" name="maximum_capacity" id="f-cap" placeholder="e.g. 22"
+                    min="1" value="{{ filled.maximum_capacity }}" required>
+                  <span class="error-msg" id="e-cap"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Duration Per Slot (mins) *</h5>
+                  <input type="number" name="duration" id="f-dur" placeholder="e.g. 60"
+                    min="1" value="{{ filled.duration }}" required>
+                  <span class="error-msg" id="e-dur"></span>
+                </div>
+
+                <!-- ── Image ── -->
+                <div class="field-section-title">Turf Image <span class="opt-tag">Optional</span></div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  <label for="imgInput" class="img-upload-label">
+                    <span class="fa fa-cloud-upload-alt" style="font-size:1.8rem;color:#ccc;"></span>
+                    Click to upload a turf photo
+                    <span>JPG, PNG or WEBP · max 5 MB</span>
+                  </label>
+                  <input type="file" name="image" id="imgInput" accept="image/*" style="display:none" onchange="prevImg(this)">
+                  <img id="imgPreview" src="" alt="Preview">
+                </div>
+
+                <!-- ── Rules ── -->
+                <div class="field-section-title">Rules & Regulations <span class="opt-tag">Optional</span></div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  <textarea name="rules" placeholder="e.g. No smoking on the turf, proper sports shoes required…" rows="3">{{ filled.rules }}</textarea>
+                </div>
+
+              </div><!-- /d-grid -->
+
+              <div id="formSubmitError" class="submit-error">Please fix the errors above before submitting.</div>
+
+              <button type="submit" class="btn btn-style btn-secondary book mt-3" style="width:100%;" id="addTurfBtn">
+                Add Turf
+              </button>
+            </form>
+
+          </div>
+        </div><!-- /form-right-inf -->
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function prevImg(input) {
+    if (input.files && input.files[0]) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        var img = document.getElementById('imgPreview');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      r.readAsDataURL(input.files[0]);
+    }
+  }
+
+  document.getElementById('addTurfForm').addEventListener('submit', function(e) {
+    var ok = true;
+
+    function v(id, errId, msg, cond) {
+      var el = document.getElementById(id);
+      var er = document.getElementById(errId);
+      if (cond(el)) { er.textContent = msg; ok = false; }
+      else           { er.textContent = ''; }
+    }
+
+    v('f-name',  'e-name',  'At least 3 characters required.',         function(el){ return el.value.trim().length < 3; });
+    v('f-desc',  'e-desc',  'At least 10 characters required.',        function(el){ return el.value.trim().length < 10; });
+    v('f-cat',   'e-cat',   'Please select a category.',               function(el){ return !el.value; });
+    v('f-loc',   'e-loc',   'Please select a location.',               function(el){ return !el.value; });
+    v('f-phone', 'e-phone', 'Enter exactly 10 digits.',                function(el){ return !/^\d{10}$/.test(el.value.trim()); });
+    v('f-email', 'e-email', 'Enter a valid email address.',            function(el){ return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()); });
+    v('f-price', 'e-price', 'Enter a positive price.',                 function(el){ return !el.value || parseInt(el.value) <= 0; });
+    v('f-cap',   'e-cap',   'Enter a positive capacity.',              function(el){ return !el.value || parseInt(el.value) <= 0; });
+    v('f-dur',   'e-dur',   'Enter a positive duration.',              function(el){ return !el.value || parseInt(el.value) <= 0; });
+
+    if (!ok) {
+      e.preventDefault();
+      document.getElementById('formSubmitError').style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  });
+</script>
+
+{% endblock %}

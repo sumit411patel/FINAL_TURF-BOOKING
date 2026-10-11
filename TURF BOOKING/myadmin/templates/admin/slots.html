@@ -1,0 +1,36 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}All Slots{% endblock %}
+{% block nav_slots %}active{% endblock %}
+{% block page_title %}All Slots{% endblock %}
+{% block breadcrumb %}Slots{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="section-head"><h4>All Slots ({{ slots|length }})</h4></div>
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Turf</th><th>Date</th><th>Start</th><th>End</th><th>Booked</th><th>Available</th></tr></thead>
+    <tbody>
+      {% for s in slots %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ s.turf.name }}</td>
+        <td>{{ s.date }}</td>
+        <td>{{ s.start_time|time:"g:i A" }}</td>
+        <td>{{ s.end_time|time:"g:i A" }}</td>
+        <td>
+          <span class="badge {% if s.is_booked %}badge-danger{% else %}badge-success{% endif %}">
+            {% if s.is_booked %}Yes{% else %}No{% endif %}
+          </span>
+        </td>
+        <td>
+          <span class="badge {% if s.is_available %}badge-success{% else %}badge-muted{% endif %}">
+            {% if s.is_available %}Available{% else %}Expired{% endif %}
+          </span>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7"><div class="empty-adm"><span class="fa fa-calendar"></span><p>No slots found.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

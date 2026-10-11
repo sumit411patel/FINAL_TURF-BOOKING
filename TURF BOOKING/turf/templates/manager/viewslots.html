@@ -1,0 +1,131 @@
+{% extends 'base.html'%}
+{% block title %} View Slots {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 70px 20px; text-align: center;
+  }
+  .empty-state .empty-icon { font-size: 4.5rem; color: #ced4da; margin-bottom: 18px; }
+  .empty-state h5 { font-weight: 700; color: #495057; font-size: 1.4rem; margin-bottom: 8px; }
+  .empty-state p  { color: #6c757d; font-size: 0.95rem; margin-bottom: 24px; }
+  .btn-add-slot {
+    background: #198754; color: #fff; border-radius: 30px;
+    padding: 10px 30px; font-weight: 600; text-decoration: none;
+    transition: all 0.2s ease; display: inline-block;
+  }
+  .btn-add-slot:hover { background: #157347; color: #fff; text-decoration: none; }
+
+  /* status badges */
+  .badge-pill {
+    border-radius: 20px; padding: 3px 12px; font-size: 0.78rem; font-weight: 700;
+  }
+  .badge-booked     { background: #fee2e2; color: #991b1b; }
+  .badge-not-booked { background: #d1fae5; color: #065f46; }
+  .badge-available  { background: #d1fae5; color: #065f46; }
+  .badge-expired    { background: #f3f4f6; color: #6b7280; }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h3>Slots List</h3>
+      <p><a href="/index">Home</a> / Slots List</p>
+    </div>
+  </div>
+</section>
+
+<div class="container p-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">All Slots</h2>
+    <a href="/timeslots" class="btn-add-slot"><span class="fa fa-plus" style="margin-right:6px;"></span>Add New Slot</a>
+  </div>
+
+  {% if slotsdata %}
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>Turf Name</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Booked?</th>
+        <th>Availability</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in slotsdata %}
+      <tr>
+        <td><strong>{{ s.turf.name }}</strong></td>
+        <td>{{ s.date }}</td>
+        <td>{{ s.start_time|time:"g:i A" }}</td>
+        <td>{{ s.end_time|time:"g:i A" }}</td>
+        <td>
+          {% if s.is_booked %}
+            <span class="badge-pill badge-booked">Booked</span>
+          {% else %}
+            <span class="badge-pill badge-not-booked">Not Booked</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if s.is_available %}
+            <span class="badge-pill badge-available"><span class="fa fa-check-circle"></span> Available</span>
+          {% else %}
+            <span class="badge-pill badge-expired"><span class="fa fa-clock-o"></span> Not Available</span>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          <button type="button" class="btn btn-sm btn-outline-danger"
+            data-toggle="modal" data-target="#deleteSlotModal{{ s.id }}">
+            <i class="fa fa-trash"></i>
+          </button>
+
+          <!-- Delete Modal -->
+          <div class="modal fade" id="deleteSlotModal{{ s.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger"><i class="fa fa-exclamation-triangle mr-2"></i>Remove Slot</h5>
+                  <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                  Remove slot <strong>{{ s.start_time|time:"g:i A" }} – {{ s.end_time|time:"g:i A" }}</strong> on <strong>{{ s.date }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <a href="/removeslot/{{ s.id }}" class="btn btn-danger">Yes, Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination ml-1 mt-4">
+    <span class="step-links">
+      <span class="current">Page {{ slotsdata.number }} of {{ slotsdata.paginator.num_pages }}.</span>
+      {% if slotsdata.has_previous %}<a href="?page=1" class="btn btn-sm btn-secondary active ml-2">&laquo;</a>{% endif %}
+      {% for i in slotsdata.paginator.page_range %}
+      <a href="?page={{ i }}" class="btn btn-sm btn-secondary active ml-1 {% if slotsdata.number == i %}disabled{% endif %}">{{ i }}</a>
+      {% endfor %}
+      {% if slotsdata.has_next %}<a href="?page={{ slotsdata.paginator.num_pages }}" class="btn btn-sm btn-secondary active ml-1">&raquo;</a>{% endif %}
+    </span>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <h5>No Slots Added Yet</h5>
+    <p>You haven't added any time slots. Add slots so users can book your turfs.</p>
+    <a href="/timeslots" class="btn-add-slot"><span class="fa fa-plus" style="margin-right:8px;"></span>Add Your First Slot</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

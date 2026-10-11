@@ -1,0 +1,66 @@
+{%extends 'base.html'%}
+{%block title%} Turfs List {%endblock%}
+
+{%block main%}
+{%load static%}
+
+<section class="w3l-breadcrumb">
+    <div class="breadcrum-bg py-sm-5 py-4">
+        <div class="container py-lg-3">
+            <h2>Turfs</h2>
+            <p><a href="/index">Home</a> /  Turf List</p>
+        </div>
+    </div>
+</section>
+
+<div class="best-rooms w3l-blog py-5">
+    <div class="container py-lg-5 py-sm-4">
+        <div class="ban-content-inf row">
+            {% for t in turfs %}
+            <div class="maghny-gd-1 col-lg-4 col-md-6">
+                <div class="maghny-grid">
+                    <figure class="effect-lily">
+                        {% if t.image %}
+                            <img class="img-fluid" src="{{ t.image.url }}" alt="{{ t.name }}" style="height:250px;object-fit:cover;">
+                        {% endif %}
+                        <figcaption class="mb-5">
+                            <div>
+                                <h4 class="room-title">{{t.name}}</h4>
+                                <h4 class="top-text"> <b> {{t.category}}</b></h4>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="room-info">
+                        <h3 class="room-title"><a href="#url">{{t.name}}</a></h3>
+                        <ul class="mb-3">
+                            <li><span class="fa fa-users"></span> {{t.maximum_capacity}}</li>
+                            <li><span class="fa fa-map-marker"></span>{{t.location}}</li>
+                            <li><span class="fa fa-clock-o" style="font-size:1.2rem;"></span>{{t.duration_per_slot}} mins</li>
+                        </ul>
+                        <h5>Slot Price: {{t.price_per_slot}} &#x20B9;</h5>
+                        <p>Description: {{t.description|slice:"70"}}</p>
+                        {% if manager %}
+                        <span class="btn mt-sm-4 mt-3" style="background:#e9ecef;color:#aaa;cursor:not-allowed;border:1px solid #ddd;" title="Managers cannot book turfs">
+                          <span class="fa fa-eye" style="margin-right:4px;"></span> View Only
+                        </span>
+                        {% else %}
+                        <a href="/selectdate/{{t.id}}" class="btn mt-sm-4 mt-3">Book Now</a>
+                        {% endif %}
+                        <div class="room-info-bottom">
+                            <ul class="room-amenities">
+                                <li><a href="#url"><span class="fa fa-bed" title="Beds"></span></a></li>
+                                <li><a href="#url"><span class="fa fa-television" title="Television"></span></a></li>
+                                <li><a href="#url"><span class="fa fa-wheelchair-alt"
+                                            title="Private Bathroom"></span></a></li>
+                                <li><a href="#url"><span class="fa fa-motorcycle" title="Bike Rental"></span></a></li>
+                            </ul>
+                            <a href="/turfdetails/{{t.id}}" class="btn view">Full Info &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{%endblock%}

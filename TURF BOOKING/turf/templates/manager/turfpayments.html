@@ -1,0 +1,87 @@
+{% extends 'base.html'%}
+{% block title %} Turf Payments {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 70px 20px; text-align: center;
+  }
+  .empty-state .empty-icon { font-size: 4.5rem; color: #ced4da; margin-bottom: 18px; }
+  .empty-state h5 { font-weight: 700; color: #495057; font-size: 1.4rem; margin-bottom: 8px; }
+  .empty-state p  { color: #6c757d; font-size: 0.95rem; }
+  .status-badge {
+    display: inline-block; border-radius: 20px; padding: 3px 12px;
+    font-size: 0.78rem; font-weight: 700;
+  }
+  .status-complete { background: #d1fae5; color: #065f46; }
+  .status-pending  { background: #fef3c7; color: #92400e; }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Turf Payments</h2>
+      <p><a href="/">Home</a> / Turf Payments</p>
+    </div>
+  </div>
+</section>
+
+<div class="container p-5">
+  <h2 class="mb-4">All Payments</h2>
+
+  {% if paymentsdata %}
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>User</th>
+        <th>Turf</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Transaction ID</th>
+        <th>Date &amp; Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in paymentsdata %}
+      <tr>
+        <td>{{ p.user.name }}</td>
+        <td><strong>{{ p.booking.turf }}</strong></td>
+        <td>&#8377;{{ p.amount }}</td>
+        <td>{{ p.payment_method }}</td>
+        <td style="font-size:0.82rem;word-break:break-all;">{{ p.transaction_id|default:"—" }}</td>
+        <td>{{ p.payment_date_time|date:"d M Y, g:i A" }}</td>
+        <td>
+          <span class="status-badge {% if p.payment_status == 'complete' %}status-complete{% else %}status-pending{% endif %}">
+            {{ p.payment_status|capfirst }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination ml-1 mt-4">
+    <span class="step-links">
+      <span class="current">Page {{ paymentsdata.number }} of {{ paymentsdata.paginator.num_pages }}.</span>
+      {% if paymentsdata.has_previous %}<a href="?page=1" class="btn btn-sm btn-secondary active ml-2">&laquo;</a>{% endif %}
+      {% for i in paymentsdata.paginator.page_range %}
+      <a href="?page={{ i }}" class="btn btn-sm btn-secondary active ml-1 {% if paymentsdata.number == i %}disabled{% endif %}">{{ i }}</a>
+      {% endfor %}
+      {% if paymentsdata.has_next %}<a href="?page={{ paymentsdata.paginator.num_pages }}" class="btn btn-sm btn-secondary active ml-1">&raquo;</a>{% endif %}
+    </span>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <div class="empty-icon"><span class="fa fa-credit-card"></span></div>
+    <h5>No Payments Yet</h5>
+    <p>No payment transactions have been recorded yet. Completed payments will appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

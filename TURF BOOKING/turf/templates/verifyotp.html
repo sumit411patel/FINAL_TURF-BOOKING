@@ -1,0 +1,93 @@
+{% extends 'base.html'%}
+{%block ttile%} Verify OTP {%endblock%}
+
+{%block main%}
+{% load static %}
+
+<!-- //w3l-header -->
+<section class="w3l-booking-top">
+    <!-- /form-16-section -->
+    <div class="booking-form-61">
+        <div class="container">
+            <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <div class="form-right-inf">
+                    <div class="booking-form-content">
+                        <h6>Verify OTP</h6>
+                        <form action="/verifyotp" class="book-depature-6 signin-form" method="post">
+                            {%csrf_token%}
+                            <div class="d-grid grid-col-4">
+                                <div class="hny-frm_grid">
+                                    <h5>OTP</h5>
+                                    <input class="email" name="otp" type="text" id="otpInput" placeholder="Enter 6-digit OTP" required>
+                                </div>
+                                
+                                <div style="display:flex; justify-content: space-between; align-items:center; margin-top:15px;">
+                                    <span style="color: #444; font-weight:bold;">Time remaining: <span id="countdownDisplay" style="color:red;">--:--</span></span>
+                                    <a href="/resendotp" id="resendBtn" class="btn btn-style btn-primary btn-sm" style="pointer-events: none; opacity: 0.5;">Resend OTP</a>
+                                </div>
+                                
+                                <button class="btn btn-style btn-secondary book mt-4" id="verifyBtn">Verify</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Context parameters loaded cleanly into JS from views.py
+    let expiresIn = parseInt("{{expires_in}}");
+    let resendIn = parseInt("{{resend_in}}");
+
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const resendBtn = document.getElementById('resendBtn');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const otpInput = document.getElementById('otpInput');
+
+    function formatTime(seconds) {
+        if (seconds <= 0) return "00:00";
+        let m = Math.floor(seconds / 60);
+        let s = seconds % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function updateTimers() {
+        expiresIn--;
+        resendIn--;
+
+        countdownDisplay.innerText = formatTime(expiresIn);
+
+        // Handle Resend button limit
+        if (resendIn <= 0) {
+            resendBtn.style.pointerEvents = "auto";
+            resendBtn.style.opacity = "1";
+        }
+
+        // Handle Total Expiry exactly matching our backend limits
+        if (expiresIn <= 0) {
+            clearInterval(timerInterval);
+            verifyBtn.style.pointerEvents = "none";
+            verifyBtn.style.opacity = "0.5";
+            verifyBtn.innerText = "Expired";
+            otpInput.disabled = true;
+            countdownDisplay.innerText = "EXPIRED";
+        }
+    }
+
+    // Initialize display immediately before interval fires
+    countdownDisplay.innerText = formatTime(expiresIn);
+    if (resendIn <= 0) {
+        resendBtn.style.pointerEvents = "auto";
+        resendBtn.style.opacity = "1";
+    }
+
+    // Tick every second
+    const timerInterval = setInterval(updateTimers, 1000);
+</script>
+
+{%endblock%}

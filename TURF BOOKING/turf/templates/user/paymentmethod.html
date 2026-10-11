@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %} Select Payment Method {% endblock %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <div class="card-header">
+                    <h3 class="text-center">Select Payment Method</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/processpayment" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="slotid" value="{{slotid}}">
+                        <input type="hidden" name="turfid" value="{{turfid}}">
+
+                        <!-- Payment Method Options -->
+                        <div class="form-group">
+                            <label class="mb-3">Select Payment Method:</label>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="cash" name="paymentMethod" value="cash" class="custom-control-input" checked>
+                                <label class="custom-control-label" for="cash">Cash</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="creditCard" name="paymentMethod" value="creditCard" class="custom-control-input">
+                                <label class="custom-control-label" for="creditCard">Credit Card</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="debitCard" name="paymentMethod" value="debitCard" class="custom-control-input">
+                                <label class="custom-control-label" for="debitCard">Debit Card</label>
+                            </div>
+                            <!-- Add more payment method options as needed -->
+                        </div>
+
+                        <!-- Continue Button -->
+                        <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

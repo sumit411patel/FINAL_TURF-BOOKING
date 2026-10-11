@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% block title %}Feedback – {{ turfdata.name }}{% endblock %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  /* ── Page wrapper ──────────────────────────────────────── */
+  .feedback-section {
+    background: #f4f6f8;
+    min-height: 80vh;
+    padding: 55px 0;
+  }
+
+  .feedback-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.09);
+    overflow: hidden;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  /* ── Header — project native style (same as payment page) */
+  .feedback-header {
+    position: relative;
+    z-index: 0;
+    padding: 38px 40px 34px;
+    background: url('/static/assets/images/golf9.jpg') center top / cover no-repeat;
+    color: #fff;
+  }
+  .feedback-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 10, 12, 0.72);
+    z-index: -1;
+  }
+  .feedback-header h3 {
+    font-family: 'Spartan', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+  .feedback-header p {
+    font-size: 0.87rem;
+    opacity: 0.80;
+    margin: 0;
+  }
+
+  /* ── Body ──────────────────────────────────────────────── */
+  .feedback-body { padding: 36px 40px; }
+
+  /* ── Star rating (pure CSS) ────────────────────────────── */
+  .star-group {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 26px;
+  }
+
+  .star-group input[type="radio"] { display: none; }
+
+  .star-group label {
+    font-size: 2.1rem;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .star-group input:checked ~ label,
+  .star-group label:hover,
+  .star-group label:hover ~ label {
+    color: #f59e0b;
+  }
+
+  /* ── Form fields ───────────────────────────────────────── */
+  .fb-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .fb-textarea {
+    width: 100%;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    color: #333;
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 24px;
+    font-family: inherit;
+  }
+  .fb-textarea:focus { border-color: #198754; }
+
+  /* ── Submit button ─────────────────────────────────────── */
+  .btn-submit-fb {
+    width: 100%;
+    background: #198754;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(25,135,84,0.3);
+    letter-spacing: 0.3px;
+  }
+  .btn-submit-fb:hover {
+    background: #157347;
+    box-shadow: 0 6px 18px rgba(25,135,84,0.4);
+    transform: translateY(-2px);
+  }
+
+  /* ── Already-submitted notice ──────────────────────────── */
+  .existing-notice {
+    background: #edfbf3;
+    border: 1.5px solid #a7f3d0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    font-size: 0.88rem;
+    color: #065f46;
+  }
+  .existing-notice strong { font-weight: 700; }
+</style>
+
+<!-- Breadcrumb -->
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Feedback</h2>
+      <p>
+        <a href="/index">Home</a> /
+        <a href="/userbookings">My Bookings</a> /
+        Feedback
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="feedback-section">
+  <div class="container">
+    <div class="feedback-card">
+
+      <!-- Header -->
+      <div class="feedback-header">
+        <h3><span class="fa fa-star" style="margin-right:10px;color:#f59e0b;"></span>Leave Your Feedback</h3>
+        <p>Share your experience at <strong>{{ turfdata.name }}</strong></p>
+      </div>
+
+      <!-- Body -->
+      <div class="feedback-body">
+
+        {% if existing %}
+        <div class="existing-notice">
+          <span class="fa fa-check-circle" style="margin-right:6px;"></span>
+          <strong>You've already submitted feedback for this turf.</strong>
+          You can update it below.
+        </div>
+        {% endif %}
+
+        <form action="/addfeedback" method="post" id="feedbackForm">
+          {% csrf_token %}
+          <input type="hidden" name="fid" value="{{ fid }}">
+
+          <!-- Star rating -->
+          <label class="fb-label">Your Rating *</label>
+          <div class="star-group">
+            {% for val in "54321" %}
+            <input type="radio" id="star{{ val }}" name="rating" value="{{ val }}"
+              {% if existing and existing.rating|stringformat:"s" == val %}checked{% endif %}>
+            <label for="star{{ val }}" title="{{ val }} star">&#9733;</label>
+            {% endfor %}
+          </div>
+
+          <!-- Comment -->
+          <label class="fb-label" for="fb-message">Your Experience *</label>
+          <textarea
+            id="fb-message"
+            name="message"
+            class="fb-textarea"
+            placeholder="Tell us about your experience — what did you enjoy? Any suggestions?"
+            minlength="5"
+            required>{% if existing %}{{ existing.comment }}{% endif %}</textarea>
+
+          <button type="submit" class="btn-submit-fb" id="fbSubmitBtn">
+            <span class="fa fa-paper-plane" style="margin-right:8px;"></span>
+            {% if existing %}Update Feedback{% else %}Submit Feedback{% endif %}
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Client-side validation
+  document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+    var rating = document.querySelector('input[name="rating"]:checked');
+    var msg    = document.getElementById('fb-message').value.trim();
+    if (!rating) {
+      e.preventDefault();
+      alert('Please select a star rating before submitting.');
+      return;
+    }
+    if (msg.length < 5) {
+      e.preventDefault();
+      alert('Please write at least 5 characters in your feedback.');
+      return;
+    }
+  });
+</script>
+
+{% endblock %}

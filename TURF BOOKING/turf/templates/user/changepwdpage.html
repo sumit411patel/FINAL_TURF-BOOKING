@@ -1,0 +1,64 @@
+{% extends 'base.html'%}
+{%block title%} Change Password {%endblock%}
+
+{%block main%}
+{% load static %}
+<style>
+    .error-msg {
+        color: red;
+        font-size: 14px;
+        display: block;
+        margin-top: 5px;
+    }
+    .submit-error {
+        color: red;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        display: none;
+    }
+</style>
+
+<!-- //w3l-header -->
+<!-- /form-16-section -->
+<section class="w3l-booking-top">
+    <div class="booking-form-61">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-0"> </div>
+                <div class="col-md-6 col-12">
+                    <div class="booking-form-content">
+                            <h6>Change Password</h6>
+                            <form action="/changepwd" class="book-depature-6" id="changepwdform" method="post">
+                                {%csrf_token%}
+                                <div class="d-grid grid-col-4">
+                                    <div class="hny-frm_grid">
+                                        <h5>Old Password</h5>
+                                        <input class="password" id="oldPwdInput" name="oldpwd" type="password" placeholder="Your old Password" required>
+                                        <span id="oldPwdError" class="error-msg"></span>
+                                    </div>
+                                    <div class="hny-frm_grid mt-3">
+                                        <h5>New Password</h5>
+                                        <input class="password" id="newPwdInput" name="newpwd" type="password" placeholder="New Password" required>
+                                        <span id="newPwdError" class="error-msg"></span>
+                                    </div>
+                                    <div class="hny-frm_grid mt-3">
+                                        <h5>Confirm Password</h5>
+                                        <input class="password" id="confirmPwdInput" name="confirmpwd" type="password" placeholder="Confirm Password" required>
+                                        <span id="confirmPwdError" class="error-msg"></span>
+                                    </div>
+                                    <div id="changePwdSubmitError" class="submit-error">Please fill all required fields correctly!</div>
+                                    <button type="submit" class="btn btn-style btn-secondary book mt-3">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{%endblock%}

@@ -1,0 +1,61 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Locations{% endblock %}
+{% block nav_locations %}active{% endblock %}
+{% block page_title %}Locations{% endblock %}
+{% block breadcrumb %}Locations{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start;">
+
+  <div class="form-card">
+    <h4>{% if edit_location %}<span class="fa fa-edit"></span> Edit Location{% else %}<span class="fa fa-plus"></span> Add Location{% endif %}</h4>
+    <form method="post" action="{% if edit_location %}/myadmin/locations/edit/{{ edit_location.id }}{% else %}/myadmin/locations/add{% endif %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>City *</label>
+        <select class="form-control-adm" name="city_id" required>
+          <option value="">— Select City —</option>
+          {% for c in cities %}
+          <option value="{{ c.id }}" {% if edit_location and edit_location.city_name.id == c.id %}selected{% endif %}>{{ c.city_name }} ({{ c.state_name.state_name }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Area Name *</label>
+        <input class="form-control-adm" type="text" name="area_name" value="{% if edit_location %}{{ edit_location.area_name }}{% endif %}" placeholder="e.g. Andheri West" required>
+      </div>
+      <div class="form-group">
+        <label>Postal Code *</label>
+        <input class="form-control-adm" type="number" name="postal_code" value="{% if edit_location %}{{ edit_location.postal_code }}{% endif %}" placeholder="e.g. 400053" required>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn-adm btn-primary-adm">{% if edit_location %}Update{% else %}Add Location{% endif %}</button>
+        {% if edit_location %}<a href="/myadmin/locations" class="btn-adm btn-warning-adm">Cancel</a>{% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><h4>All Locations ({{ locations|length }})</h4></div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Area</th><th>City</th><th>State</th><th>Postal</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for l in locations %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ l.area_name }}</td>
+          <td>{{ l.city_name.city_name }}</td>
+          <td>{{ l.city_name.state_name.state_name }}</td>
+          <td>{{ l.postal_code }}</td>
+          <td style="white-space:nowrap;">
+            <a href="/myadmin/locations/edit/{{ l.id }}" class="btn-adm btn-warning-adm btn-sm-adm"><span class="fa fa-edit"></span></a>
+            <a href="/myadmin/locations/delete/{{ l.id }}" class="btn-adm btn-danger-adm btn-sm-adm" onclick="return confirm('Delete?')"><span class="fa fa-trash"></span></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6"><div class="empty-adm"><span class="fa fa-map-marker"></span><p>No locations added yet.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

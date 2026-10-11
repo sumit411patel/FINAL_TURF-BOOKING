@@ -1,0 +1,380 @@
+{% extends 'base.html'%}
+{% block title %} Book Turf – Select Date {% endblock %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  /* ── Page Layout ──────────────────────────────────── */
+  .selectdate-section {
+    background: #f4f6f8;
+    min-height: 80vh;
+    padding: 50px 0;
+  }
+
+  .selectdate-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.09);
+    padding: 40px 36px;
+  }
+
+  .selectdate-card .turf-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 18px;
+    margin-bottom: 32px;
+  }
+
+  .selectdate-card .turf-header h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+
+  .selectdate-card .turf-header p {
+    color: #6c757d;
+    font-size: 0.93rem;
+    margin: 0;
+  }
+
+  .selectdate-card .turf-header .badge-cat {
+    display: inline-block;
+    background: #e6f3ff;
+    color: #1565c0;
+    border-radius: 20px;
+    padding: 3px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  /* ── Section label ─────────────────────────────────── */
+  .dates-label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  /* ── Date cards grid ───────────────────────────────── */
+  .dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .date-card {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 18px 10px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    user-select: none;
+  }
+
+  .date-card:hover {
+    border-color: #198754;
+    background: #edfbf3;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(25,135,84,0.13);
+  }
+
+  .date-card.selected {
+    border-color: #198754;
+    background: #198754;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(25,135,84,0.35);
+    transform: translateY(-3px);
+  }
+
+  .date-card.selected .date-day,
+  .date-card.selected .date-month,
+  .date-card.selected .date-slots {
+    color: #fff;
+  }
+
+  .date-card .date-day {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #1a1a2e;
+  }
+
+  .date-card .date-weekday {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  .date-card.selected .date-weekday {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .date-card .date-month {
+    font-size: 0.82rem;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  .date-card .date-slots {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #198754;
+    background: #e8f5e9;
+    border-radius: 20px;
+    padding: 2px 10px;
+    display: inline-block;
+  }
+
+  .date-card.selected .date-slots {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+
+  .date-card .checkmark {
+    display: none;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #198754;
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+    line-height: 24px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .date-card.selected .checkmark {
+    display: block;
+  }
+
+  /* ── Today badge ───────────────────────────────────── */
+  .date-card .today-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #e65100;
+    background: #fff3e0;
+    border-radius: 10px;
+    padding: 1px 8px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  .date-card.selected .today-badge {
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+  }
+
+  /* ── Submit area ───────────────────────────────────── */
+  .submit-area {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border: 1.5px dashed #d0d0d0;
+    text-align: center;
+  }
+
+  .submit-area.has-selection {
+    border-color: #198754;
+    background: #edfbf3;
+  }
+
+  #selectedDateDisplay {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #198754;
+  }
+
+  .btn-proceed {
+    background: #198754;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 14px;
+    box-shadow: 0 4px 14px rgba(25,135,84,0.3);
+  }
+
+  .btn-proceed:hover {
+    background: #157347;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(25,135,84,0.4);
+  }
+
+  .btn-proceed:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ── Empty State ──────────────────────────────────── */
+  .empty-dates {
+    text-align: center;
+    padding: 50px 20px;
+  }
+
+  .empty-dates .empty-icon {
+    font-size: 4rem;
+    color: #ced4da;
+    margin-bottom: 16px;
+  }
+
+  .empty-dates h5 {
+    color: #495057;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .empty-dates p {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 480px) {
+    .dates-grid {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+    }
+    .date-card .date-day { font-size: 1.6rem; }
+  }
+</style>
+
+<!-- Breadcrumb -->
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Book a Turf</h2>
+      <p><a href="/index">Home</a> / <a href="/userturflist">Turfs</a> / Select Date</p>
+    </div>
+  </div>
+</section>
+
+<section class="selectdate-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <div class="selectdate-card">
+
+          <!-- Turf Header -->
+          <div class="turf-header">
+            <h3><span class="fa fa-map-marker" style="color:#198754;margin-right:8px;"></span>{{ turfdata.name }}</h3>
+            <span class="badge-cat">{{ turfdata.category }}</span>
+            <p class="mt-2">
+              <span class="fa fa-map-marker-alt" style="margin-right:4px;"></span>{{ turfdata.location }}
+              &nbsp;|&nbsp;
+              <span class="fa fa-tag" style="margin-right:4px;"></span>&#8377;{{ turfdata.price_per_slot }} per slot
+            </p>
+          </div>
+
+          <!-- Available Dates -->
+          {% if available_dates %}
+            <p class="dates-label">
+              <span class="fa fa-calendar-alt" style="margin-right:6px;color:#198754;"></span>
+              Choose an Available Date
+            </p>
+
+            <form action="/selectslotpage" method="post" id="dateSelectionForm">
+              {% csrf_token %}
+              <input type="hidden" name="turfid" value="{{ turfid }}">
+              <input type="hidden" name="date" id="selectedDateInput" value="">
+
+              <div class="dates-grid">
+                {% for entry in available_dates %}
+                  <div class="date-card"
+                       onclick="selectDate(this, this.dataset.date)"
+                       data-date="{{ entry.date|date:'Y-m-d' }}">
+                    <div class="checkmark">&#10003;</div>
+                    {% if entry.date == today %}
+                      <div class="today-badge">Today</div>
+                    {% endif %}
+                    <div class="date-day">{{ entry.date|date:"d" }}</div>
+                    <div class="date-weekday">{{ entry.date|date:"D" }}</div>
+                    <div class="date-month">{{ entry.date|date:"M Y" }}</div>
+                    <div class="date-slots">{{ entry.total_slots }} slot{{ entry.total_slots|pluralize }} free</div>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <!-- Submit Area -->
+              <div class="submit-area" id="submitArea">
+                <div id="selectedDateDisplay">No date selected yet</div>
+                <br>
+                <button type="submit" class="btn-proceed" id="proceedBtn" disabled>
+                  View Available Slots &nbsp; <span class="fa fa-arrow-right"></span>
+                </button>
+              </div>
+            </form>
+
+          {% else %}
+            <!-- Empty State -->
+            <div class="empty-dates">
+              <div class="empty-icon">
+                <span class="fa fa-calendar-times"></span>
+              </div>
+              <h5>No Available Dates</h5>
+              <p>There are currently no available booking dates for this turf.<br>Please check back later or explore other turfs.</p>
+              <a href="/userturflist" class="btn btn-secondary mt-3" style="border-radius:30px;padding:10px 30px;">
+                <span class="fa fa-arrow-left"></span> Browse Other Turfs
+              </a>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  var MONTH_NAMES = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+  var DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function selectDate(card, dateStr) {
+    // Remove selected from all cards
+    document.querySelectorAll('.date-card').forEach(function(c) {
+      c.classList.remove('selected');
+    });
+
+    // Mark this one selected
+    card.classList.add('selected');
+
+    // Populate hidden input
+    document.getElementById('selectedDateInput').value = dateStr;
+
+    // Update display label
+    var parts = dateStr.split('-');
+    var d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var label = DAY_NAMES[d.getDay()] + ', ' + d.getDate() + ' ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getFullYear();
+    document.getElementById('selectedDateDisplay').innerText = 'Selected: ' + label;
+
+    // Enable button + style submit area
+    document.getElementById('proceedBtn').disabled = false;
+    document.getElementById('submitArea').classList.add('has-selection');
+  }
+</script>
+
+{% endblock %}

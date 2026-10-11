@@ -1,0 +1,388 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<!-- Mirrored from p.w3layouts.com/demos_new/template_demo/28-03-2020/hotels-liberty-demo_Free/1275019035/web/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 01 Jan 2024 05:34:23 GMT -->
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="{% static 'assets/images/logo1.jpg' %}"/>
+
+  <title>{%block title%} Turf Booking {%endblock%}</title>
+
+  <link href="http://fonts.googleapis.com/css?family=Spartan:400,500,600,700,900;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha384-GLhlTQ8iN17PdL7v3N7mSAyT9zKalxjDexAbB5NQbeuUJ/6Z/hRTt8+pR6L4N2MF" crossorigin="anonymous">
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{%static 'assets/css/style-starter.css'%}">
+  <link rel="stylesheet" href="{%static 'assets/css/style-liberty.css'%}">
+  <link rel="stylesheet" href="{%static 'assets/css/userprofile.css'%}">
+</head>
+
+<body>
+  <script src="../../../../../../../m.servedby-buysellads.com/monetization.js" type="text/javascript"></script>
+  <script>
+    (function () {
+      if (typeof _bsa !== 'undefined' && _bsa) {
+        // format, zoneKey, segment:value, options
+        _bsa.init('flexbar', 'CKYI627U', 'placement:w3layoutscom');
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      if (typeof _bsa !== 'undefined' && _bsa) {
+        // format, zoneKey, segment:value, options
+        _bsa.init('fancybar', 'CKYDL2JN', 'placement:demo');
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      if (typeof _bsa !== 'undefined' && _bsa) {
+        // format, zoneKey, segment:value, options
+        _bsa.init('stickybox', 'CKYI653J', 'placement:w3layoutscom');
+      }
+    })();
+  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src='https://www.googletagmanager.com/gtag/js?id=G-98H8KRKT85'></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-98H8KRKT85');
+  </script>
+
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+  <div class="pull-right toggle-right-sidebar">
+    <span class="fa title-open-right-sidebar tooltipstered fa-angle-double-right"></span>
+  </div>
+
+  </div>
+  </div>
+
+  <!--w3l-header-->
+
+  <header class="w3l-header-nav">
+    <!--/nav-->
+    <nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-2">
+      <div class="container">
+        <a class="navbar-brand text-primary" href="/index">EZ Turfs </a>
+        <!-- if logo is image enable this
+						<a class="navbar-brand" href="#index.html">
+							<img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+						</a> -->
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+          data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <!-- <span class="navbar-toggler-icon"></span> -->
+          <span class="fa icon-expand fa-bars"></span>
+          <span class="fa icon-close fa-times"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active mt-3">
+              <a class="nav-link" href="/index">Home</a>
+            </li>
+            <li class="nav-item @@about__active mt-3">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+
+            <li class="nav-item @@contact__active mt-3">
+              <a class="nav-link" href="/contact">Contact</a>
+            </li>
+
+
+            {% if request.session.login_id %}
+            {% if manager %}
+            <li class="nav-item dropdown @@room__active mt-3">
+              <a class="nav-link dropdown-toggle" href="#" id="managerop" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Action <span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="managerop">
+                <a class="dropdown-item" href="/addturfpage">Add Turf</a>
+                <a class="dropdown-item" href="/timeslots">Add Slots</a>
+                <a class="dropdown-item" href="/turflist">View Turf</a>
+                <a class="dropdown-item" href="/viewslots">View Slots</a>
+                <a class="dropdown-item" href="/turfbookings">View Bookings</a>
+                <a class="dropdown-item" href="/turfpayments">View Payments</a>
+              </div>
+            </li>
+            {%else%}
+
+            <li class="nav-item @@services__active  mt-3">
+              <a class="nav-link" href="/services">Services</a>
+            </li>
+
+
+            <li class="nav-item @@services__active mt-3">
+              <a class="nav-link" href="/userturflist">Turf List</a>
+            </li>
+
+            <li class="nav-item dropdown @@room__active mt-3">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Bookings<span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <a class="dropdown-item" href="/userbookings">Turf Bookings</a>
+                <a class="dropdown-item" href="/userpayemnts">View payments</a>
+              </div>
+            </li>
+          </ul>
+          {%endif%}
+          {%endif%}
+
+          {% if request.session.login_id %}
+          <a class="ml-3 book btn btn-secondary btn-style" href="/logout">Logout</a>
+
+          {%if profiledata.profile_pic == None%}
+          <a class=" ml-3 book btn btn-secondary btn-style" href="/completeprofilepage">Complete Profile</a>
+          {%else%}
+          <a class=" ml-3 book btn btn-secondary btn-style" href="/userprofile">Your Profile</a>
+          {%endif%}
+
+          {%else%}
+          <a class="ml-3 book btn btn-secondary btn-style mt-1" href="/login">Login</a>
+          <a class=" ml-3 book btn btn-secondary btn-style mt-1" href="/register">Register</a>
+          {%endif%}
+        </div>
+      </div>
+    </nav>
+    <!--//nav-->
+  </header>
+  <!-- //w3l-header -->
+  {%include 'message.html'%}
+
+  {%block main%}
+
+  {%endblock%}
+
+  <section class="w3l-footer-29-main">
+    <div class="footer-29 py-5">
+      <div class="container py-lg-4">
+        <div class="row footer-top-29">
+          <div class="col-lg-3 col-md-6 col-sm-8 footer-list-29 footer-1">
+            <h6 class="footer-title-29">Contact Us</h6>
+            <ul>
+              <li>
+                <p><span class="fa fa-map-marker"></span> Turf Rental, #32841 block, #221DRS Rental & Paid rooms
+                  business, UK.</p>
+              </li>
+              <li><a href="tel:+7-800-999-800"><span class="fa fa-phone"></span> +(21)-255-999-8888</a></li>
+              <li><a href="https://p.w3layouts.com/cdn-cgi/l/email-protection#bcd4d3c8d9d0cffcd1ddd5d092dfd3d1"
+                  class="mail"><span class="fa fa-envelope-open-o"></span>
+                  <span class="__cf_email__"
+                    data-cfemail="aec6c1dacbc2ddeec3cfc7c280cdc1c3">[email&#160;protected]</span></a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-6 col-sm-4 footer-list-29 footer-2 mt-sm-0 mt-5">
+
+            <ul>
+              <h6 class="footer-title-29">Useful Links</h6>
+              <li><a href="/index">Home</a></li>
+              <li><a href="/about">About turf</a></li>
+              <li><a href="/contact">Contact us</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-4 col-md-6 col-sm-7 footer-list-29 footer-4 mt-lg-0 mt-5">
+            <h6 class="footer-title-29">Newsletter </h6>
+            <p>Enter your email and receive the latest news from us.
+              We'll never share your email address</p>
+
+            <form action="#" class="subscribe" method="post">
+              <input type="email" name="email" placeholder="Your Email Address" required="">
+              <button><span class="fa fa-envelope-o"></span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="w3l-footer-29-main w3l-copyright">
+    <div class="container">
+      <div class="row bottom-copies">
+        <p class="col-lg-8 copy-footer-29">© 2020 Hotels. All rights reserved | Designed by <a
+            href="https://w3layouts.com/">W3layouts</a></p>
+
+        <div class="col-lg-4 main-social-footer-29">
+          <a href="#facebook" class="facebook"><span class="fa fa-facebook"></span></a>
+          <a href="#twitter" class="twitter"><span class="fa fa-twitter"></span></a>
+          <a href="#instagram" class="instagram"><span class="fa fa-instagram"></span></a>
+          <a href="#linkedin" class="linkedin"><span class="fa fa-linkedin"></span></a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- move top -->
+    <button onclick="topFunction()" id="movetop" title="Go to top">
+      &#10548;
+    </button>
+    {% block js%}
+    <script data-cfasync="false"
+      src="../../../../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+      // When the user scrolls down 20px from the top of the document, show the button
+      window.onscroll = function () {
+        scrollFunction()
+      };
+
+      function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          document.getElementById("movetop").style.display = "block";
+        } else {
+          document.getElementById("movetop").style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }
+    </script>
+    <!-- /move top -->
+  </section>
+
+  <!-- Template JavaScript -->
+  <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/owl.carousel.js' %}"></script>
+
+  <!-- script for banner slider-->
+  <script>
+    $(document).ready(function () {
+      $('.owl-one').owlCarousel({
+        loop: true,
+        margin: 0,
+        nav: false,
+        responsiveClass: true,
+        autoplay: false,
+        autoplayTimeout: 5000,
+        autoplaySpeed: 1000,
+        autoplayHoverPause: false,
+        responsive: {
+          0: {
+            items: 1,
+            nav: false
+          },
+          480: {
+            items: 1,
+            nav: false
+          },
+          667: {
+            items: 1,
+            nav: true
+          },
+          1000: {
+            items: 1,
+            nav: true
+          }
+        }
+      })
+    })
+  </script>
+  <!-- //script -->
+
+  <!-- script for owlcarousel -->
+  <script>
+    $(document).ready(function () {
+      $('.owl-testimonial').owlCarousel({
+        loop: true,
+        margin: 0,
+        nav: true,
+        responsiveClass: true,
+        autoplay: false,
+        autoplayTimeout: 5000,
+        autoplaySpeed: 1000,
+        autoplayHoverPause: false,
+        responsive: {
+          0: {
+            items: 1,
+            nav: false
+          },
+          480: {
+            items: 1,
+            nav: false
+          },
+          667: {
+            items: 1,
+            nav: true
+          },
+          1000: {
+            items: 1,
+            nav: true
+          }
+        }
+      })
+    })
+  </script>
+  <!-- //script for owlcarousel -->
+  <script src="{%static 'assets/js/jquery.magnific-popup.min.js'%}"></script>
+  <script>
+    $(document).ready(function () {
+      $('.popup-with-zoom-anim').magnificPopup({
+        type: 'inline',
+
+        fixedContentPos: false,
+        fixedBgPos: true,
+
+        overflowY: 'auto',
+
+        closeBtnInside: true,
+        preloader: false,
+
+        midClick: true,
+        removalDelay: 300,
+        mainClass: 'my-mfp-zoom-in'
+      });
+
+      $('.popup-with-move-anim').magnificPopup({
+        type: 'inline',
+
+        fixedContentPos: false,
+        fixedBgPos: true,
+
+        overflowY: 'auto',
+
+        closeBtnInside: true,
+        preloader: false,
+
+        midClick: true,
+        removalDelay: 300,
+        mainClass: 'my-mfp-slide-bottom'
+      });
+    });
+  </script>
+
+
+  <!-- disable body scroll which navbar is in active -->
+  <script>
+    $(function () {
+      $('.navbar-toggler').click(function () {
+        $('body').toggleClass('noscroll');
+      })
+    });
+  </script>
+  <!-- disable body scroll which navbar is in active -->
+
+  <script src="{%static 'assets/js/bootstrap.min.js' %}"></script>
+
+  <script>(function () { var js = "window['__CF$cv$params']={r:'83e8648f6d9a2e87',t:'MTcwNDA4NzI2My42MDcwMDA='};_cpo=document.createElement('script');_cpo.nonce='',_cpo.src='../../../../../../cdn-cgi/challenge-platform/h/g/scripts/jsd/74bd6362/main.js',document.getElementsByTagName('head')[0].appendChild(_cpo);"; var _0xh = document.createElement('iframe'); _0xh.height = 1; _0xh.width = 1; _0xh.style.position = 'absolute'; _0xh.style.top = 0; _0xh.style.left = 0; _0xh.style.border = 'none'; _0xh.style.visibility = 'hidden'; document.body.appendChild(_0xh); function handler() { var _0xi = _0xh.contentDocument || _0xh.contentWindow.document; if (_0xi) { var _0xj = _0xi.createElement('script'); _0xj.innerHTML = js; _0xi.getElementsByTagName('head')[0].appendChild(_0xj); } } if (document.readyState !== 'loading') { handler(); } else if (window.addEventListener) { document.addEventListener('DOMContentLoaded', handler); } else { var prev = document.onreadystatechange || function () { }; document.onreadystatechange = function (e) { prev(e); if (document.readyState !== 'loading') { document.onreadystatechange = prev; handler(); } }; } })();</script>
+  {% endblock %}
+  <script src="{% static 'assets/js/main.js' %}?v=1.7"></script>
+</body>
+
+</html>

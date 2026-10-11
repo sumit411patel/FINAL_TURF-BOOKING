@@ -1,0 +1,64 @@
+{% extends 'base.html'%}
+{%block title%} Login {%endblock%}
+
+{%block main%}
+{% load static %}
+<style>
+    .error-msg {
+        color: red;
+        font-size: 14px;
+        display: block;
+        margin-top: 5px;
+    }
+    .submit-error {
+        color: red;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        display: none;
+    }
+</style>
+
+<!-- //w3l-header -->
+<section class="w3l-booking-top">
+    <!-- /form-16-section -->
+    <div class="booking-form-61 p-5">
+        <div class="container">
+            <div class="booking-top-gds">
+                <div class="form-right-inf">
+                    <div class="booking-form-content">
+                        <h6>Login Now</h6>
+                        <form action="/loginuser" class="book-depature-6 signin-form" id="loginform" method="post">
+                            {%csrf_token%}
+                            <div class="d-grid grid-col-4">
+                                <div class="hny-frm_grid">
+                                    <h5>Email</h5>
+                                    <input class="email" id="loginEmailInput" name="email" type="email" placeholder="Your Email" required>
+                                    <span id="loginEmailError" class="error-msg"></span>
+                                </div>
+                                <div class="hny-frm_grid mt-3">
+                                    <h5>Password</h5>
+                                    <input class="password" id="loginPasswordInput" name="password" type="password" placeholder="password" required>
+                                    <span id="loginPasswordError" class="error-msg"></span>
+                                </div>
+                                <a class="text-primary mt-3" href="/forgotpasswordpage"> Forgot Password ?</a>
+                                <div id="loginSubmitError" class="submit-error">Please fill all required fields correctly!</div>
+                                <button type="submit" id="loginBtn" class="btn btn-style btn-secondary book mt-3">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="booking-forms-16-info align-self">
+                    <h5>Your Reservation</h5>
+                    <h3 class="title-big">Turftime Triumph: Mastering Turf Reservations for Unparalleled Sports and Events Excitement.</h3>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{%endblock%}

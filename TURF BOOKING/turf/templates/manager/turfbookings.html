@@ -1,0 +1,84 @@
+{% extends 'base.html'%}
+{% block title %} Turf Bookings {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 70px 20px; text-align: center;
+  }
+  .empty-state .empty-icon { font-size: 4.5rem; color: #ced4da; margin-bottom: 18px; }
+  .empty-state h5 { font-weight: 700; color: #495057; font-size: 1.4rem; margin-bottom: 8px; }
+  .empty-state p  { color: #6c757d; font-size: 0.95rem; }
+  .status-badge {
+    display: inline-block; border-radius: 20px; padding: 3px 12px;
+    font-size: 0.78rem; font-weight: 700; text-transform: capitalize;
+  }
+  .status-booked     { background: #d1fae5; color: #065f46; }
+  .status-not-booked { background: #fee2e2; color: #991b1b; }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Turf Bookings</h2>
+      <p><a href="/">Home</a> / Turf Bookings</p>
+    </div>
+  </div>
+</section>
+
+<div class="container p-5">
+  <h2 class="mb-4">All Bookings</h2>
+
+  {% if bookingdata %}
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>User</th>
+        <th>Turf</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Booked At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookingdata %}
+      <tr>
+        <td>{{ booking.user.name }}</td>
+        <td><strong>{{ booking.turf.name }}</strong></td>
+        <td>{{ booking.slot.date }}</td>
+        <td>{{ booking.slot.start_time|time:"g:i A" }} – {{ booking.slot.end_time|time:"g:i A" }}</td>
+        <td>
+          <span class="status-badge {% if booking.booking_status == 'booked' %}status-booked{% else %}status-not-booked{% endif %}">
+            {{ booking.booking_status }}
+          </span>
+        </td>
+        <td>{{ booking.booked_at|date:"d M Y, g:i A" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination ml-1 mt-4">
+    <span class="step-links">
+      <span class="current">Page {{ bookingdata.number }} of {{ bookingdata.paginator.num_pages }}.</span>
+      {% if bookingdata.has_previous %}<a href="?page=1" class="btn btn-sm btn-secondary active ml-2">&laquo;</a>{% endif %}
+      {% for i in bookingdata.paginator.page_range %}
+      <a href="?page={{ i }}" class="btn btn-sm btn-secondary active ml-1 {% if bookingdata.number == i %}disabled{% endif %}">{{ i }}</a>
+      {% endfor %}
+      {% if bookingdata.has_next %}<a href="?page={{ bookingdata.paginator.num_pages }}" class="btn btn-sm btn-secondary active ml-1">&raquo;</a>{% endif %}
+    </span>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <h5>No Bookings Yet</h5>
+    <p>There are no bookings recorded yet. Once users start booking turfs, they'll appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

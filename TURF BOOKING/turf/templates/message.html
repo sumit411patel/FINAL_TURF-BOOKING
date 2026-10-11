@@ -1,0 +1,36 @@
+<style>
+ #messageBox {
+    z-index: 2 !important;
+    position: absolute;
+    width: 70%;
+    margin: 10px auto;
+    left:15%;
+  }
+</style>
+
+<div class="message-box" id="alertMessage">
+  {% if messages %}
+  <ul class="messages" id="messageBox" >
+    {% for message in messages %}
+    <div class="container-fluid p-0">
+      <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+
+<script>
+setTimeout(function() {
+    var alertMessage = document.getElementById('alertMessage');
+    if (alertMessage) {
+      alertMessage.style.display = 'none';
+    }
+  }, 2000);
+</script>

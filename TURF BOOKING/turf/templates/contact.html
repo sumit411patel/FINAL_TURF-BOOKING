@@ -1,0 +1,92 @@
+{% extends 'base.html'%}
+
+{% load static %}
+{% block title %} Contact {% endblock %}
+
+{%block main%}
+<section class="w3l-breadcrumb">
+    <div class="breadcrum-bg py-sm-5 py-4">
+        <div class="container py-lg-3">
+            <h2>Contact Us</h2>
+            <p><a href="/index">Home</a> &nbsp; / &nbsp; Contact</p>
+
+        </div>
+    </div>
+</section>
+<!-- contact1 -->
+<section class="w3l-contact-1 py-5">
+    <div class="contacts-9 py-lg-5 py-sm-4">
+        <div class="container">
+            <div class="d-grid contact-view">
+                <div class="cont-details">
+                    <p>Get in touch</p>
+                    <h3 class="title-big">Contact and Access</h3>
+                </div>
+                <div class="map-content-9">
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit tempore sapiente, distinctio
+                        perferendis voluptas consequatur quaerat incidunt. Similique, officia! Dolorum fugiat et aliquam
+                        necessitatibus quas reiciendis, totam voluptatibus deleniti tempore doloribus.</p>
+                </div>
+            </div>
+            <div class="map-iframe my-5">
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235014.29918736647!2d72.41493042707978!3d23.0201580848502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2z4KqF4Kqu4Kqm4Kq-4Kq14Kq-4KqmLCDgqpfgq4HgqpzgqrDgqr7gqqQ!5e0!3m2!1sgu!2sin!4v1713787458484!5m2!1sgu!2sin" width="100%" height="300px" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="d-grid contact-view">
+                <div class="cont-details">
+                    <div class="cont-top">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-phone text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Call Us</h6>
+                            <p><a href="tel:+44 99 555 42">+91 8780436071</a></p>
+                        </div>
+                    </div>
+                    <div class="cont-top margin-up">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-envelope-o text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Email Us</h6>
+                            <p><a href="mailto:example@mail.com" class="mail">easyturfsinfo@mail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="cont-top margin-up">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-map-marker text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Address</h6>
+                            <p>Address here, 208 Trainer Avenue street, Illinois, UK - 62617.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-content-9 mt-lg-0 mt-4">
+                    <form action="/contactus" method="post">
+                        {%csrf_token%}
+                        <div class="twice">
+                            <input type="text" class="form-control" name="name" id="w3lName" placeholder="Name"
+                                required="">
+                        </div>
+                        <div class="twice-two">
+
+                            <input type="tel" class="form-control" name="phone" id="w3lphone" placeholder="Phone"
+                                required="">
+
+                            <input type="email" class="form-control" name="email" id="w3lSender" placeholder="Email"
+                                required="">
+                        </div>
+                        <div class="twice">
+                            <input type="text" class="form-control" name="subject" id="w3lSubject"
+                                placeholder="Subject" required="">
+                        </div>
+                        <textarea name="message" class="form-control" id="w3lMessage" placeholder="Message"
+                            required=""></textarea>
+                        <button type="submit" class="btn  btn-contact btn-secondary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,242 @@
+{%extends 'base.html'%}
+{%block title%} Home | turf booking {%endblock%}
+{%load static%}
+
+{%block main%}
+
+<!-- main-slider -->
+<section class="w3l-main-slider" id="home" xmlns="http://www.w3.org/1999/html">
+    <div class="companies20-content">
+        <div class="owl-one owl-carousel owl-theme">
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view bg bg2">
+                        <div class="banner-info">
+                            <div class="container">
+                                <div class="banner-info-bg">
+                                    <h5>Location is heavenly. Best to visit in week days to enjoy the peaceful beauty
+                                    </h5>
+                                    <a class="btn btn-style transparent-btn mt-sm-5 mt-4" href="/services"> Our
+                                        Services</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info  banner-view banner-top1 bg bg2">
+                        <div class="banner-info">
+                            <div class="container">
+                                <div class="banner-info-bg">
+                                    <h5>Our new hotels will play a leading role in prompting the world peace.</h5>
+                                    <a class="btn btn-style transparent-btn mt-sm-5 mt-4" href="/services"> Our
+                                        Services</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view banner-top2 bg bg2">
+                        <div class="banner-info">
+                            <div class="container">
+                                <div class="banner-info-bg">
+                                    <h5>Most hotels train their people with the booklets. We take ours to the ballet.
+                                    </h5>
+                                    <a class="btn btn-style transparent-btn mt-sm-5 mt-4" href="/services"> Our
+                                        Services</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view banner-top3 bg bg2">
+                        <div class="banner-info">
+                            <div class="container">
+                                <div class="banner-info-bg">
+                                    <h5>Good tourism will follow good hotels. Experience our luxury hotel rooms</h5>
+                                    <a class="btn btn-style transparent-btn mt-sm-5 mt-4" href="/services"> Our
+                                        Services</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- /main-slider -->
+{% if request.session.login_id %}
+{% if not manager %}
+<section class="w3l-availability-form pt-5 pb-5" id="booking">
+    <div class="container pt-lg-5 pb-lg-5">
+        <div class="row">
+            <div class="col-12 form-right text-center">
+                <h3 class="title-small">Check Availability</h3>
+                <form id="searchTurfForm">
+                    {%csrf_token%}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-input col-md-4 col-sm-06 mt-3 mx-auto ">
+                                <input type="text" id="searchInput" name="areaname" required="" placeholder="enter turf category or location">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bottom-btn col-md-4 col-sm-6 mt-5 mx-auto">
+                                <button class="btn btn-style btn-primary w-100 px-2">Check Availability</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endif %}
+
+{% if turfs %}
+<div class="best-rooms w3l-blog py-0">
+    <div class="container  py-sm-4">
+        <div class="ban-content-inf row" id="turfContainer">
+            {% for t in turfs %}
+            <div class="maghny-gd-1 col-lg-4 col-md-6">
+                <div class="maghny-grid">
+                    <figure class="effect-lily">
+                        {% if t.image %}
+                            <img class="img-fluid" src="{{ t.image.url }}" alt="{{ t.name }}" style="height:250px;object-fit:cover;">
+                        {% endif %}
+                        <figcaption class="mb-5">
+                            <div>
+                                <h4 class="room-title">{{t.name}}</h4>
+                                <h4 class="top-text"> <b> {{t.category}}</b></h4>
+                            </div>
+                        </figcaption>
+                    </figure>
+                    <div class="room-info">
+                        <h3 class="room-title"><a href="#">{{t.name}}</a></h3>
+                        <ul class="mb-3">
+                            <li><span class="fa fa-users"></span> {{t.maximum_capacity}}</li>
+                            <li><span class="fa fa-map-marker"></span>{{t.location}}</li>
+                            <li><span class="fa fa-clock-o" style="font-size:1.2rem;"></span>{{t.duration_per_slot}} mins</li>
+                        </ul>
+                        <h5>Slot Price: {{t.price_per_slot}} &#x20B9;</h5>
+                        <p>Description: {{t.description|slice:"70"}}</p>
+                        {% if manager %}
+                            <span class="btn mt-sm-4 mt-3" style="background:#e9ecef;color:#aaa;cursor:not-allowed;border:1px solid #ddd;">View Only</span>
+                        {% elif is_logged_in %}
+                            <a href="/selectdate/{{t.id}}" class="btn mt-sm-4 mt-3">Book Now</a>
+                        {% else %}
+                            <a href="/login" class="btn mt-sm-4 mt-3" style="background:#198754;color:#fff;">Login to Book</a>
+                        {% endif %}
+                        <div class="room-info-bottom">
+                            <a href="/turfdetails/{{t.id}}" class="btn view">Full Info &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- //quotation -->
+<div class="quotation py-5">
+    <div class="container py-xl-5 py-lg-3">
+        <div class="welcome-left text-center py-md-5 py-3">
+            <h3>Enjoy a Luxury experience. Discover our locaions. Relax and enjoy your holiday</h3>
+            {% if is_logged_in and not manager %}
+            <a href="/userturflist" class="btn btn-style transparent-btn mt-sm-5 mt-4 mr-2">Book Now</a>
+            {% elif not is_logged_in %}
+            <a href="/userturflist" class="btn btn-style transparent-btn mt-sm-5 mt-4 mr-2">Browse Turfs</a>
+            {% endif %}
+            <a href="/contact" class="btn btn-style btn-primary mt-sm-5 mt-4">Contact Us</a>
+        </div>
+    </div>
+</div>
+<!-- //quotation -->
+
+<section class="w3l-logos py-5">
+    <div class="container py-lg-3">
+        <div class="row">
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view">
+                <img src="static/assets/images/logo3.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view">
+                <img src="static/assets/images/logo2.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view mt-sm-0 mt-4">
+                <img src="static/assets/images/logo4.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view mt-md-0 mt-4">
+                <img src="static/assets/images/logo2.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view mt-lg-0 mt-4">
+                <img src="static/assets/images/logo3.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 logo-view mt-lg-0 mt-4">
+                <img src="static/assets/images/logo2.jpg" alt="company-logo" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('searchTurfForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var filter = document.getElementById('searchInput').value.toLowerCase();
+    var container = document.getElementById('turfContainer');
+    if (!container) return; // Might not exist if initially empty
+    var cards = container.getElementsByClassName('maghny-gd-1');
+    var matchCount = 0;
+
+    for (var i = 0; i < cards.length; i++) {
+        var textContext = cards[i].innerText.toLowerCase();
+        if (textContext.indexOf(filter) > -1) {
+            cards[i].style.display = '';
+            matchCount++;
+        } else {
+            cards[i].style.display = 'none';
+        }
+    }
+
+    // Handle "no results" message mimicry
+    var existingMsg = document.getElementById('alertMessageJS');
+    if (existingMsg) {
+        existingMsg.remove();
+    }
+
+    if (matchCount === 0) {
+        var msgHTML = `
+        <div class="message-box" id="alertMessageJS">
+          <ul class="messages" id="messageBox" style="z-index: 2 !important; position: absolute; width: 70%; margin: 10px auto; left:15%;">
+            <div class="container-fluid p-0">
+              <div class="alert error alert-dismissible" role="alert" style="background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                No result found for this category or location.
+              </div>
+            </div>
+          </ul>
+        </div>`;
+        document.getElementById('searchTurfForm').insertAdjacentHTML('afterend', msgHTML);
+        setTimeout(function() {
+            var am = document.getElementById('alertMessageJS');
+            if (am) am.style.display = 'none';
+        }, 2000);
+    }
+});
+</script>
+{%endblock%}

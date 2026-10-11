@@ -1,0 +1,144 @@
+{% extends 'base.html'%}
+{% block title %} My Bookings {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+    .empty-state {
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 60px 20px; text-align: center;
+    }
+    .empty-state img { width: 220px; max-width: 80%; margin-bottom: 24px; opacity: 0.8; }
+    .empty-state h4 { font-size: 1.4rem; font-weight: 700; color: #3a3a3a; margin-bottom: 8px; }
+    .empty-state p  { color: #7a7a7a; font-size: 0.95rem; margin-bottom: 22px; }
+    .btn-book {
+        border: 2px solid #198754; color: #198754; padding: 10px 30px;
+        border-radius: 30px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;
+    }
+    .btn-book:hover { background: #198754; color: #fff; }
+
+    /* Status badges */
+    .badge-status {
+        display: inline-block; border-radius: 20px; padding: 3px 12px;
+        font-size: 0.76rem; font-weight: 700; text-transform: capitalize;
+    }
+    .badge-booked    { background: #d1fae5; color: #065f46; }
+    .badge-pending   { background: #fef9c3; color: #854d0e; }
+    .badge-cancelled { background: #fee2e2; color: #991b1b; }
+
+    /* Feedback button */
+    .btn-feedback {
+        display: inline-flex; align-items: center; gap: 6px;
+        border-radius: 20px; padding: 5px 16px; font-size: 0.78rem;
+        font-weight: 700; border: none; cursor: pointer; transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-feedback.active-fb {
+        background: #198754; color: #fff;
+    }
+    .btn-feedback.active-fb:hover { background: #157347; color: #fff; }
+    .btn-feedback.disabled-fb {
+        background: #f3f4f6; color: #9ca3af;
+        cursor: not-allowed; pointer-events: none;
+    }
+    .btn-feedback.done-fb {
+        background: #dbeafe; color: #1d4ed8;
+    }
+    .btn-feedback.done-fb:hover { background: #bfdbfe; color: #1d4ed8; }
+</style>
+
+<section class="w3l-breadcrumb">
+    <div class="breadcrum-bg py-sm-5 py-4">
+        <div class="container py-lg-3">
+            <h2>My Bookings</h2>
+            <p><a href="/index">Home</a> / My Bookings History</p>
+        </div>
+    </div>
+</section>
+
+<div class="container p-5">
+    <h2 class="mb-4">My Booked Turfs</h2>
+
+    {% if bookingdata %}
+    <div class="table-responsive">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Turf Name</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+                <th>Booked At</th>
+                <th class="text-center">Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bookingdata %}
+            <tr>
+                <td><strong>{{ b.turf.name }}</strong></td>
+                <td>{{ b.slot.date }}</td>
+                <td>{{ b.slot.start_time|time:"g:i A" }}</td>
+                <td>{{ b.slot.end_time|time:"g:i A" }}</td>
+                <td>
+                    <span class="badge-status
+                        {% if b.booking_status == 'booked' %}badge-booked
+                        {% elif b.booking_status == 'not_booked' %}badge-cancelled
+                        {% else %}badge-pending{% endif %}">
+                        {{ b.booking_status }}
+                    </span>
+                </td>
+                <td>{{ b.booked_at|date:"d M Y, g:i A" }}</td>
+                <td class="text-center">
+                    {% if b.slot.date < cdate %}
+                        {# Past date — slot definitely done, allow feedback #}
+                        <a href="/feedback/{{ b.turf.id }}" class="btn-feedback active-fb">
+                            <span class="fa fa-star"></span> Feedback
+                        </a>
+                    {% elif b.slot.date == cdate %}
+                        {# Today — check if slot start time has passed (now_dt is full datetime from view) #}
+                        {% if b.slot.start_time <= now_dt.time %}
+                            <a href="/feedback/{{ b.turf.id }}" class="btn-feedback active-fb">
+                                <span class="fa fa-star"></span> Feedback
+                            </a>
+                        {% else %}
+                            <span class="btn-feedback disabled-fb" title="Available after slot starts">
+                                <span class="fa fa-lock"></span> Feedback
+                            </span>
+                        {% endif %}
+                    {% else %}
+                        {# Future date — disabled #}
+                        <span class="btn-feedback disabled-fb" title="Available after slot starts">
+                            <span class="fa fa-lock"></span> Feedback
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination ml-1 mt-4">
+        <span class="step-links">
+            <span class="current">Page {{ bookingdata.number }} of {{ bookingdata.paginator.num_pages }}.</span>
+            {% if bookingdata.has_previous %}<a href="?page=1" class="btn btn-sm btn-secondary active ml-2">&laquo;</a>{% endif %}
+            {% for i in bookingdata.paginator.page_range %}
+            <a href="?page={{ i }}" class="btn btn-sm btn-secondary active ml-1 {% if bookingdata.number == i %}disabled{% endif %}">{{ i }}</a>
+            {% endfor %}
+            {% if bookingdata.has_next %}<a href="?page={{ bookingdata.paginator.num_pages }}" class="btn btn-sm btn-secondary active ml-1">&raquo;</a>{% endif %}
+        </span>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <h4>No Bookings Yet!</h4>
+        <p>You haven't booked any turf yet. Explore available turfs and make your first booking.</p>
+        <a href="/userturflist" class="btn-book">Browse Turfs</a>
+    </div>
+    {% endif %}
+
+    <div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{%extends 'base.html'%}
+{%block title%} Turfs Details {%endblock%}
+{%block main%}
+{%load static%}
+
+<!-- room-single-block -->
+<section class="room-single-block">
+    <div class="content-with-slider">
+        <div class="container">
+            <div class="content-photo-1 d-grid">
+                <div class="content-photo-left text-center">
+                    <h4>{{turfdata.name}}</h4>
+                    <h6>{{turfdata.category}}</h6>
+                    <div class="border-line">
+                        <div class="bg">
+                            <span class="price" style="color:#19c82f;">{{turfdata.price_per_slot}} &#8377</span>
+                            <p> Per Slot</p>
+                        </div>
+                        <div class="book-btn px-2">
+                            {% if manager %}
+                            <span class="btn btn-style btn-secondary mt-3"
+                              style="background:#e9ecef;color:#aaa;cursor:not-allowed;border:1px solid #ddd;pointer-events:none;"
+                              title="Managers cannot book turfs">
+                              <span class="fa fa-eye" style="margin-right:4px;"></span> View Only
+                            </span>
+                            <p style="font-size:12px;color:#c0392b;margin-top:6px;margin-bottom:0;">
+                              <span class="fa fa-info-circle"></span> Managers cannot make bookings.
+                            </p>
+                            {% else %}
+                            <a href="/selectdate/{{turfdata.id}}" class="btn btn-style btn-secondary mt-3">Book Now</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="/userturflist" class="back"> <span class="fa fa-long-arrow-left"></span> Back to all Turfs</a>
+                </div>
+
+                <div class="content-photo-right">
+                    <div class="csslider infinity" id="slider1">
+                        <ul class="banner_slide_bg">
+                        {% if turfdata.image %}
+                            <li>
+                                <img class="img" src="{{ turfdata.image.url }}" alt="{{ turfdata.name }}" style="height:400px;object-fit:cover;width:100%;">
+                            </li>
+                        {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- //room-single-block -->
+<section class="w3l-roomsingleblock1 py-5">
+	<div class="container py-sm-4">
+		<div class="row">
+			<div class="col-lg-3 col-md-4 col-6">
+				<img src="{%static 'assets/images/bb.jpg' %}" alt="" class="img-fluid">
+			</div>
+			<div class="col-lg-3 col-md-4 col-6">
+				<img src="{%static 'assets/images/cricket.jpg'%}" alt="" class="img-fluid">
+			</div>
+			<div class="col-lg-6 roomsingle mt-lg-0 mt-4">
+				<h3 class="title-small">Description</h3>
+				<p class="roomsingle mt-3">{{turfdata.description}}</p>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="w3l-roomsingleblock1 py-5">
+	<div class="container py-sm-4">
+		<div class="row">
+			<div class="col-lg-7 roomsingle">
+                <h3 class="title-small">Rules and Regulations</h3>
+                <p>{{turfdata.rules_and_regulations}}</p>
+			</div>
+			<div class="col-lg-5 mt-lg-0 mt-4">
+				<img src="{%static 'assets/images/golf8.jpg'%}" alt="" class="img-fluid">
+			</div>
+		</div>
+	</div>
+</section>
+
+
+{%endblock%}

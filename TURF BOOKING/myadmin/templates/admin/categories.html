@@ -1,0 +1,45 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Turf Categories{% endblock %}
+{% block nav_categories %}active{% endblock %}
+{% block page_title %}Turf Categories{% endblock %}
+{% block breadcrumb %}Categories{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start;">
+
+  <div class="form-card">
+    <h4>{% if edit_category %}<span class="fa fa-edit"></span> Edit Category{% else %}<span class="fa fa-plus"></span> Add Category{% endif %}</h4>
+    <form method="post" action="{% if edit_category %}/myadmin/categories/edit/{{ edit_category.id }}{% else %}/myadmin/categories/add{% endif %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Category Name *</label>
+        <input class="form-control-adm" type="text" name="cate_name" value="{% if edit_category %}{{ edit_category.cate_name }}{% endif %}" placeholder="e.g. Football, Cricket..." required>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn-adm btn-primary-adm">{% if edit_category %}Update{% else %}Add{% endif %}</button>
+        {% if edit_category %}<a href="/myadmin/categories" class="btn-adm btn-warning-adm">Cancel</a>{% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><h4>All Categories ({{ categories|length }})</h4></div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Category Name</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for cat in categories %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ cat.cate_name }}</td>
+          <td style="white-space:nowrap;">
+            <a href="/myadmin/categories/edit/{{ cat.id }}" class="btn-adm btn-warning-adm btn-sm-adm"><span class="fa fa-edit"></span></a>
+            <a href="/myadmin/categories/delete/{{ cat.id }}" class="btn-adm btn-danger-adm btn-sm-adm" onclick="return confirm('Delete this category?')"><span class="fa fa-trash"></span></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3"><div class="empty-adm"><span class="fa fa-tags"></span><p>No categories yet.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

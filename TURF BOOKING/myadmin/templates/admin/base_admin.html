@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{% static 'assets/images/logo1.jpg' %}"/>
+  <title>{% block title %}Admin Panel{% endblock %} — EZ Turfs Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green:#198754; --green-light:#1daa6a; --green-dark:#146c43;
+      --sidebar-w:260px; --sidebar-bg:#0f1f17; --sidebar-hover:#1a3325;
+      --header-h:64px; --card-radius:14px;
+      --shadow:0 4px 18px rgba(0,0,0,.09);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:#f1f5f3;color:#1a1a1a;display:flex;min-height:100vh;}
+
+    /* ── Sidebar ── */
+    .sidebar{
+      width:var(--sidebar-w);min-height:100vh;background:var(--sidebar-bg);
+      display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;
+      transition:width .3s;
+    }
+    .sidebar-logo{
+      display:flex;align-items:center;gap:12px;padding:22px 22px 18px;
+      border-bottom:1px solid #1e3828;
+    }
+    .sidebar-logo .logo-icon{
+      width:38px;height:38px;background:var(--green);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;
+    }
+    .sidebar-logo .logo-text{font-size:1.1rem;font-weight:800;color:#fff;line-height:1.1;}
+    .sidebar-logo .logo-text span{color:var(--green-light);display:block;font-size:.68rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;}
+
+    .sidebar-nav{flex:1;padding:14px 0;overflow-y:auto;}
+    .nav-section-label{
+      font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+      color:#4d7a61;padding:14px 22px 6px;
+    }
+    .nav-item{
+      display:flex;align-items:center;gap:12px;padding:11px 22px;
+      text-decoration:none;color:#9cb5a7;font-size:.875rem;font-weight:500;
+      transition:all .2s;border-left:3px solid transparent;
+    }
+    .nav-item:hover,.nav-item.active{
+      background:var(--sidebar-hover);color:#fff;border-left-color:var(--green-light);
+    }
+    .nav-item .fa{width:18px;text-align:center;font-size:1rem;}
+
+    .sidebar-footer{
+      padding:16px 22px;border-top:1px solid #1e3828;
+      display:flex;align-items:center;gap:10px;
+    }
+    .admin-avatar{
+      width:36px;height:36px;background:var(--green);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9rem;flex-shrink:0;
+    }
+    .admin-info{flex:1;min-width:0;}
+    .admin-info .name{font-size:.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .admin-info .role{font-size:.68rem;color:#4d7a61;text-transform:uppercase;letter-spacing:1px;}
+    .btn-logout{
+      color:#4d7a61;font-size:.8rem;text-decoration:none;padding:4px 8px;
+      border:1px solid #1e3828;border-radius:6px;transition:all .2s;white-space:nowrap;
+    }
+    .btn-logout:hover{background:var(--green-dark);color:#fff;border-color:var(--green-dark);}
+
+    /* ── Main ── */
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+    .topbar{
+      height:var(--header-h);background:#fff;border-bottom:1px solid #e8f0eb;
+      display:flex;align-items:center;padding:0 28px;gap:16px;
+      position:sticky;top:0;z-index:50;
+    }
+    .topbar-title{font-size:1.05rem;font-weight:700;color:#1a1a1a;flex:1;}
+    .topbar-breadcrumb{font-size:.8rem;color:#888;}
+    .topbar-breadcrumb a{color:var(--green);text-decoration:none;}
+
+    .content{padding:28px;flex:1;}
+
+    /* ── Cards ── */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:18px;margin-bottom:28px;}
+    .stat-card{
+      background:#fff;border-radius:var(--card-radius);padding:22px 20px;
+      box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;
+      transition:transform .2s;
+    }
+    .stat-card:hover{transform:translateY(-3px);}
+    .stat-icon{
+      width:52px;height:52px;border-radius:12px;display:flex;align-items:center;
+      justify-content:center;font-size:1.35rem;flex-shrink:0;
+    }
+    .si-green{background:#d1fae5;color:#065f46;}
+    .si-blue{background:#dbeafe;color:#1e40af;}
+    .si-amber{background:#fef3c7;color:#92400e;}
+    .si-rose{background:#fee2e2;color:#991b1b;}
+    .si-purple{background:#ede9fe;color:#5b21b6;}
+    .si-teal{background:#ccfbf1;color:#0f766e;}
+    .si-orange{background:#ffedd5;color:#9a3412;}
+    .stat-card .val{font-size:1.7rem;font-weight:800;color:#1a1a1a;line-height:1;}
+    .stat-card .lbl{font-size:.75rem;color:#6b7280;margin-top:3px;font-weight:500;}
+
+    /* ── Tables ── */
+    .section-card{background:#fff;border-radius:var(--card-radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px;}
+    .section-head{
+      padding:18px 22px;border-bottom:1px solid #f0f0f0;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .section-head h4{font-size:.95rem;font-weight:700;color:#1a1a1a;}
+    .tbl{width:100%;border-collapse:collapse;font-size:.83rem;}
+    .tbl th{background:#f8faf9;padding:11px 16px;text-align:left;font-weight:700;color:#4b5563;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e8edea;}
+    .tbl td{padding:11px 16px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle;}
+    .tbl tr:last-child td{border-bottom:none;}
+    .tbl tr:hover td{background:#fafff9;}
+
+    /* ── Badges ── */
+    .badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.72rem;font-weight:700;}
+    .badge-success{background:#d1fae5;color:#065f46;}
+    .badge-warning{background:#fef9c3;color:#854d0e;}
+    .badge-danger{background:#fee2e2;color:#991b1b;}
+    .badge-info{background:#dbeafe;color:#1e40af;}
+    .badge-muted{background:#f3f4f6;color:#6b7280;}
+
+    /* ── Buttons ── */
+    .btn-adm{
+      display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;
+      padding:8px 16px;font-size:.8rem;font-weight:600;cursor:pointer;
+      text-decoration:none;transition:all .18s;
+    }
+    .btn-primary-adm{background:var(--green);color:#fff;}
+    .btn-primary-adm:hover{background:var(--green-dark);color:#fff;}
+    .btn-danger-adm{background:#fee2e2;color:#991b1b;}
+    .btn-danger-adm:hover{background:#fca5a5;color:#7f1d1d;}
+    .btn-warning-adm{background:#fef9c3;color:#854d0e;}
+    .btn-warning-adm:hover{background:#fde68a;color:#78350f;}
+    .btn-sm-adm{padding:5px 11px;font-size:.74rem;}
+
+    /* ── Forms ── */
+    .form-card{background:#fff;border-radius:var(--card-radius);box-shadow:var(--shadow);padding:24px;}
+    .form-card h4{font-size:1rem;font-weight:700;margin-bottom:18px;color:#1a1a1a;}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#6b7280;margin-bottom:6px;}
+    .form-control-adm{
+      width:100%;border:1.5px solid #e0e0e0;border-radius:9px;padding:10px 14px;
+      font-size:.88rem;color:#333;outline:none;transition:border-color .2s;font-family:inherit;
+    }
+    .form-control-adm:focus{border-color:var(--green);}
+
+    /* ── Alerts ── */
+    .alert-adm{
+      border-radius:10px;padding:12px 18px;margin-bottom:18px;
+      font-size:.85rem;display:flex;align-items:center;gap:10px;
+    }
+    .alert-success-adm{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+    .alert-error-adm{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+
+    /* ── Empty ── */
+    .empty-adm{text-align:center;padding:50px 20px;color:#9ca3af;}
+    .empty-adm .fa{font-size:3rem;margin-bottom:12px;display:block;}
+    .empty-adm p{font-size:.9rem;}
+
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .sidebar{width:64px;}
+      .sidebar-logo .logo-text,.nav-section-label,.nav-item span,.admin-info,.btn-logout{display:none;}
+      .nav-item{padding:14px;justify-content:center;}
+      .main{margin-left:64px;}
+      .sidebar-footer{padding:12px;justify-content:center;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><span class="fa fa-leaf"></span></div>
+    <div class="logo-text">Turf Park<span>Admin Panel</span></div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="/myadmin/dashboard" class="nav-item {% block nav_dashboard %}{% endblock %}">
+      <span class="fa fa-tachometer"></span><span>Dashboard</span>
+    </a>
+
+    <div class="nav-section-label">Master Data</div>
+    <a href="/myadmin/states" class="nav-item {% block nav_states %}{% endblock %}">
+      <span class="fa fa-map"></span><span>States</span>
+    </a>
+    <a href="/myadmin/cities" class="nav-item {% block nav_cities %}{% endblock %}">
+      <span class="fa fa-building"></span><span>Cities</span>
+    </a>
+    <a href="/myadmin/locations" class="nav-item {% block nav_locations %}{% endblock %}">
+      <span class="fa fa-map-marker"></span><span>Locations</span>
+    </a>
+    <a href="/myadmin/categories" class="nav-item {% block nav_categories %}{% endblock %}">
+      <span class="fa fa-tags"></span><span>Turf Categories</span>
+    </a>
+
+    <div class="nav-section-label">Turf Data</div>
+    <a href="/myadmin/turfs" class="nav-item {% block nav_turfs %}{% endblock %}">
+      <span class="fa fa-soccer-ball-o"></span><span>Turfs</span>
+    </a>
+    <a href="/myadmin/slots" class="nav-item {% block nav_slots %}{% endblock %}">
+      <span class="fa fa-calendar"></span><span>Slots</span>
+    </a>
+    <a href="/myadmin/bookings" class="nav-item {% block nav_bookings %}{% endblock %}">
+      <span class="fa fa-book"></span><span>Bookings</span>
+    </a>
+
+    <div class="nav-section-label">User Activity</div>
+    <a href="/myadmin/users" class="nav-item {% block nav_users %}{% endblock %}">
+      <span class="fa fa-users"></span><span>Users &amp; Managers</span>
+    </a>
+    <a href="/myadmin/feedbacks" class="nav-item {% block nav_feedbacks %}{% endblock %}">
+      <span class="fa fa-star"></span><span>Feedbacks</span>
+    </a>
+    <a href="/myadmin/inquiries" class="nav-item {% block nav_inquiries %}{% endblock %}">
+      <span class="fa fa-envelope"></span><span>Inquiries</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-avatar">{{ admin_user.name|first|upper }}</div>
+    <div class="admin-info">
+      <div class="name">{{ admin_user.name }}</div>
+      <div class="role">Administrator</div>
+    </div>
+    <a href="/logout" class="btn-logout"><span class="fa fa-sign-out"></span></a>
+  </div>
+</aside>
+
+<!-- ── Main Content ── -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+      <div class="topbar-breadcrumb"><a href="/myadmin/dashboard">Admin</a> / {% block breadcrumb %}Dashboard{% endblock %}</div>
+    </div>
+  </div>
+
+  <div class="content">
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert-adm {% if msg.tags == 'error' %}alert-error-adm{% else %}alert-success-adm{% endif %}">
+      <span class="fa {% if msg.tags == 'error' %}fa-times-circle{% else %}fa-check-circle{% endif %}"></span>
+      {{ msg }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+{% extends 'base.html' %}
+{% block title %} Select Slot {% endblock %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  /* ── Page Wrapper ─────────────────────────────────── */
+  .selectslot-section {
+    background: #f4f6f8;
+    min-height: 80vh;
+    padding: 50px 0;
+  }
+
+  .slot-card-wrap {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.09);
+    padding: 40px 36px;
+  }
+
+  /* ── Page header ──────────────────────────────────── */
+  .slot-page-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 18px;
+    margin-bottom: 30px;
+  }
+
+  .slot-page-header h3 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+
+  .slot-page-header .meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  .slot-page-header .meta span {
+    margin-right: 16px;
+  }
+
+  .badge-date {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #198754;
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  /* ── Section Label ─────────────────────────────────── */
+  .section-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #888;
+    margin-bottom: 18px;
+  }
+
+  /* ── Slot Cards Grid ───────────────────────────────── */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .slot-item {
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 18px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    background: #f8f9fa;
+    user-select: none;
+  }
+
+  .slot-item:hover:not(.booked) {
+    border-color: #198754;
+    background: #edfbf3;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(25,135,84,0.13);
+  }
+
+  .slot-item.selected {
+    border-color: #198754;
+    background: #198754;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 22px rgba(25,135,84,0.35);
+  }
+
+  .slot-item.booked {
+    border-color: #dee2e6;
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  /* ── Slot card content ─────────────────────────────── */
+  .slot-icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    color: #adb5bd;
+  }
+
+  .slot-item.selected .slot-icon,
+  .slot-item:hover:not(.booked) .slot-icon {
+    color: inherit;
+  }
+
+  .slot-period {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .slot-item.selected .slot-period { color: rgba(255,255,255,0.8); }
+
+  .slot-time {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.3;
+  }
+
+  .slot-item.selected .slot-time { color: #fff; }
+
+  .slot-status {
+    margin-top: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 12px;
+    display: inline-block;
+  }
+
+  .slot-status.available {
+    background: #e8f5e9;
+    color: #198754;
+  }
+
+  .slot-item.selected .slot-status.available {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+  }
+
+  .slot-status.booked-badge {
+    background: #fdecea;
+    color: #c62828;
+  }
+
+  .slot-item .checkmark {
+    display: none;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #198754;
+    color: #fff;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+    line-height: 26px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .slot-item.selected .checkmark { display: block; }
+
+  /* ── Period icons ─────────────────── */
+  .slot-icon.morning  { color: #f9a825; }
+  .slot-icon.afternoon { color: #ef6c00; }
+  .slot-icon.evening  { color: #5c6bc0; }
+  .slot-icon.night    { color: #37474f; }
+  .slot-item.selected .slot-icon { color: rgba(255,255,255,0.9) !important; }
+
+  /* ── Submit panel ──────────────────────────────────── */
+  .submit-panel {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 22px 26px;
+    border: 2px dashed #d0d0d0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    transition: border-color 0.2s, background 0.2s;
+    margin-top: 10px;
+  }
+
+  .submit-panel.active {
+    border-color: #198754;
+    background: #edfbf3;
+  }
+
+  .submit-panel .selection-info {
+    font-size: 0.95rem;
+    color: #555;
+  }
+
+  .submit-panel .selection-info strong {
+    display: block;
+    color: #198754;
+    font-size: 1.05rem;
+  }
+
+  .btn-booknow {
+    background: #198754;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 36px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(25,135,84,0.3);
+    white-space: nowrap;
+  }
+
+  .btn-booknow:hover {
+    background: #157347;
+    box-shadow: 0 6px 18px rgba(25,135,84,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-booknow:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ── No-slot error ──────────────────────────────────── */
+  .slot-error-msg {
+    display: none;
+    color: #dc3545;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  /* ── Empty state ───────────────────────────────────── */
+  .empty-slots {
+    text-align: center;
+    padding: 50px 20px;
+  }
+
+  .empty-slots .empty-icon {
+    font-size: 3.5rem;
+    color: #ced4da;
+    margin-bottom: 14px;
+  }
+
+  .empty-slots h5 { color: #495057; font-weight: 700; margin-bottom: 8px; }
+  .empty-slots p  { color: #6c757d; font-size: 0.9rem; }
+
+  /* ── Responsive ─────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .slots-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .submit-panel { flex-direction: column; text-align: center; }
+    .slot-card-wrap { padding: 24px 18px; }
+  }
+</style>
+
+<!-- Breadcrumb -->
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Book a Slot</h2>
+      <p>
+        <a href="/index">Home</a> /
+        <a href="/userturflist">Turfs</a> /
+        {% if turfdata %}<a href="/turfdetails/{{ turfid }}">{{ turfdata.name }}</a>{% endif %} /
+        Select Slot
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="selectslot-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-md-11">
+        <div class="slot-card-wrap">
+
+          <!-- Header -->
+          <div class="slot-page-header">
+            <h3>
+              <span class="fa fa-clock-o" style="color:#198754;margin-right:8px;"></span>
+              Choose Your Time Slot
+            </h3>
+            {% if turfdata %}
+            <div class="meta">
+              <span><span class="fa fa-map-marker"></span> {{ turfdata.name }}</span>
+              <span><span class="fa fa-tag"></span> &#8377;{{ turfdata.price_per_slot }} / slot</span>
+            </div>
+            {% endif %}
+            {% if selected_date %}
+            <div class="badge-date">
+              <span class="fa fa-calendar"></span> {{ selected_date }}
+            </div>
+            {% endif %}
+          </div>
+
+          {% if slotsdata %}
+            <p class="section-label">
+              <span class="fa fa-list" style="margin-right:6px;color:#198754;"></span>
+              Available Slots — click to select
+            </p>
+
+            <form action="/initiate_payment" method="post" id="slotForm">
+              {% csrf_token %}
+              <input type="hidden" name="turfid" value="{{ turfid }}">
+              <input type="hidden" id="selectedSlot" name="selectedSlot" value="">
+
+              <div class="slots-grid">
+                {% for available_slot in slotsdata %}
+                  {% if not available_slot.is_booked %}
+                  <div class="slot-item"
+                       id="slotCard_{{ available_slot.id }}"
+                       onclick="selectSlot('{{ available_slot.id }}', this)">
+                    <div class="checkmark">&#10003;</div>
+                    <div class="slot-icon">
+                      <span class="fa fa-clock-o"></span>
+                    </div>
+                    <div class="slot-time">
+                      {{ available_slot.start_time|time:"g:i A" }}<br>to<br>{{ available_slot.end_time|time:"g:i A" }}
+                    </div>
+                    <div class="slot-status available">Available</div>
+                  </div>
+                  {% else %}
+                  <div class="slot-item booked">
+                    <div class="slot-icon">
+                      <span class="fa fa-ban"></span>
+                    </div>
+                    <div class="slot-time">
+                      {{ available_slot.start_time|time:"g:i A" }}<br>to<br>{{ available_slot.end_time|time:"g:i A" }}
+                    </div>
+                    <div class="slot-status booked-badge">Booked</div>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+
+              <!-- Error message -->
+              <div class="slot-error-msg" id="slotError">
+                <span class="fa fa-exclamation-circle"></span>
+                Please select a slot before proceeding.
+              </div>
+
+              <!-- Submit Panel -->
+              <div class="submit-panel" id="submitPanel">
+                <div class="selection-info" id="selectionInfo">
+                  <span style="color:#888;">No slot selected</span>
+                </div>
+                <button type="submit" class="btn-booknow" id="bookNowBtn" disabled>
+                  <span class="fa fa-check-circle"></span> Book Now
+                </button>
+              </div>
+
+            </form>
+
+          {% else %}
+            <div class="empty-slots">
+              <div class="empty-icon"><span class="fa fa-calendar-times-o"></span></div>
+              <h5>No Slots Available</h5>
+              <p>There are no time slots available for the selected date.<br>Please go back and choose a different date.</p>
+              <a href="/userturflist" class="btn btn-secondary mt-3" style="border-radius:30px;padding:10px 30px;">
+                <span class="fa fa-arrow-left"></span> Browse Turfs
+              </a>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  var currentSelected = null;
+
+  function selectSlot(slotId, cardEl) {
+    // Deselect previous
+    if (currentSelected) {
+      currentSelected.classList.remove('selected');
+    }
+
+    // Select new
+    cardEl.classList.add('selected');
+    currentSelected = cardEl;
+
+    // Set hidden input
+    document.getElementById('selectedSlot').value = slotId;
+
+    // Enable Book Now
+    document.getElementById('bookNowBtn').disabled = false;
+
+    // Hide error
+    document.getElementById('slotError').style.display = 'none';
+
+    // Update submit panel info
+    var period = cardEl.querySelector('.slot-period').innerText;
+    var time   = cardEl.querySelector('.slot-time').innerText.replace(/\n/g, ' ');
+    document.getElementById('selectionInfo').innerHTML =
+      '<strong>' + capitalise(period) + ' &nbsp;|&nbsp; ' + time + '</strong>' +
+      '<span style="color:#555;font-size:0.85rem;">Tap "Book Now" to confirm</span>';
+
+    // Activate submit panel style
+    document.getElementById('submitPanel').classList.add('active');
+  }
+
+  function capitalise(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // ── Form submit validation ────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    // Auto-select first available slot
+    var firstAvailable = document.querySelector('.slot-item:not(.booked)');
+    if (firstAvailable) {
+      var firstId = firstAvailable.id.replace('slotCard_', '');
+      selectSlot(firstId, firstAvailable);
+    }
+
+    // Guard submit
+    var form = document.getElementById('slotForm');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        var val = document.getElementById('selectedSlot').value;
+        if (!val) {
+          e.preventDefault();
+          document.getElementById('slotError').style.display = 'block';
+          document.getElementById('submitPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-icon si-green"><span class="fa fa-users"></span></div>
+    <div><div class="val">{{ total_users }}</div><div class="lbl">Total Users</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-blue"><span class="fa fa-user-secret"></span></div>
+    <div><div class="val">{{ total_managers }}</div><div class="lbl">Managers</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-teal"><span class="fa fa-soccer-ball-o"></span></div>
+    <div><div class="val">{{ total_turfs }}</div><div class="lbl">Total Turfs</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-amber"><span class="fa fa-calendar"></span></div>
+    <div><div class="val">{{ total_slots }}</div><div class="lbl">Total Slots</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-purple"><span class="fa fa-book"></span></div>
+    <div><div class="val">{{ total_bookings }}</div><div class="lbl">Bookings</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-rose"><span class="fa fa-credit-card"></span></div>
+    <div><div class="val">{{ total_payments }}</div><div class="lbl">Payments</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-orange"><span class="fa fa-star"></span></div>
+    <div><div class="val">{{ total_feedback }}</div><div class="lbl">Feedbacks</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-rose"><span class="fa fa-envelope"></span></div>
+    <div><div class="val">{{ total_inquiries }}</div><div class="lbl">Open Inquiries</div></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+
+  <!-- Recent Bookings -->
+  <div class="section-card">
+    <div class="section-head">
+      <h4><span class="fa fa-book" style="margin-right:8px;color:#198754;"></span>Recent Bookings</h4>
+      <a href="/myadmin/bookings" class="btn-adm btn-primary-adm btn-sm-adm">View All</a>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>User</th><th>Turf</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for b in recent_bookings %}
+        <tr>
+          <td>{{ b.user.name }}</td>
+          <td>{{ b.turf.name }}</td>
+          <td>{{ b.slot.date }}</td>
+          <td>
+            <span class="badge {% if b.booking_status == 'booked' %}badge-success{% else %}badge-danger{% endif %}">
+              {{ b.booking_status }}
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="empty-adm"><span class="fa fa-inbox"></span><p>No bookings yet</p></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recent Inquiries -->
+  <div class="section-card">
+    <div class="section-head">
+      <h4><span class="fa fa-envelope" style="margin-right:8px;color:#198754;"></span>Recent Inquiries</h4>
+      <a href="/myadmin/inquiries" class="btn-adm btn-primary-adm btn-sm-adm">View All</a>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>From</th><th>Subject</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for inq in recent_inquiries %}
+        <tr>
+          <td>{{ inq.name }}</td>
+          <td>{{ inq.subject|truncatechars:30 }}</td>
+          <td>
+            <span class="badge {% if inq.status == 'pending' %}badge-warning{% else %}badge-success{% endif %}">
+              {{ inq.status }}
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="empty-adm"><span class="fa fa-inbox"></span><p>No inquiries</p></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Quick Links -->
+<div class="section-card" style="margin-top:0;">
+  <div class="section-head"><h4>Quick Actions</h4></div>
+  <div style="padding:18px 22px;display:flex;flex-wrap:wrap;gap:12px;">
+    <a href="/myadmin/states" class="btn-adm btn-primary-adm"><span class="fa fa-map"></span> Manage States</a>
+    <a href="/myadmin/cities" class="btn-adm btn-primary-adm"><span class="fa fa-building"></span> Manage Cities</a>
+    <a href="/myadmin/locations" class="btn-adm btn-primary-adm"><span class="fa fa-map-marker"></span> Manage Locations</a>
+    <a href="/myadmin/categories" class="btn-adm btn-primary-adm"><span class="fa fa-tags"></span> Turf Categories</a>
+    <a href="/myadmin/users" class="btn-adm btn-warning-adm"><span class="fa fa-users"></span> Manage Users</a>
+    <a href="/myadmin/inquiries" class="btn-adm btn-warning-adm"><span class="fa fa-envelope"></span> View Inquiries</a>
+  </div>
+</div>
+
+{% endblock %}

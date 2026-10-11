@@ -1,0 +1,37 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Inquiries{% endblock %}
+{% block nav_inquiries %}active{% endblock %}
+{% block page_title %}Inquiries{% endblock %}
+{% block breadcrumb %}Inquiries{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="section-head"><h4>All Inquiries ({{ inquiries|length }})</h4></div>
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for inq in inquiries %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ inq.name }}</td>
+        <td>{{ inq.contact_email }}</td>
+        <td>{{ inq.contact_number }}</td>
+        <td>{{ inq.subject|truncatechars:30 }}</td>
+        <td>{{ inq.description|truncatechars:50 }}</td>
+        <td>
+          <span class="badge {% if inq.status == 'pending' %}badge-warning{% else %}badge-success{% endif %}">
+            {{ inq.status }}
+          </span>
+        </td>
+        <td>
+          <a href="/myadmin/inquiries/resolve/{{ inq.id }}" class="btn-adm btn-sm-adm {% if inq.status == 'pending' %}btn-primary-adm{% else %}btn-warning-adm{% endif %}">
+            {% if inq.status == 'pending' %}<span class="fa fa-check"></span> Resolve{% else %}<span class="fa fa-undo"></span> Reopen{% endif %}
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8"><div class="empty-adm"><span class="fa fa-envelope"></span><p>No inquiries found.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'base.html'%}
+{% block title %} Edit Turf – {{ turfdata.name }} {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .error-msg {
+    color: red;
+    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+  }
+  .submit-error {
+    color: red;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: none;
+  }
+  .img-upload-label {
+    display: block;
+    border: 2px dashed #adb5bd;
+    border-radius: 6px;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    color: #666;
+    transition: border-color 0.2s;
+    margin-top: 6px;
+  }
+  .img-upload-label:hover { border-color: #888; }
+  .img-upload-label span { font-size: 13px; display: block; margin-top: 4px; color: #999; }
+  #imgPreview { display:none; width:100%; max-height:180px; object-fit:cover; border-radius:6px; margin-top:10px; }
+  .current-img { width:100%; max-height:180px; object-fit:cover; border-radius:6px; margin-bottom:10px; }
+  .opt-tag {
+    display: inline-block;
+    background: #e9ecef; color: #888;
+    font-size: 11px; border-radius: 10px;
+    padding: 1px 8px; margin-left: 6px;
+    font-weight: 400; vertical-align: middle;
+  }
+  .field-section-title {
+    grid-column: 1 / -1;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: #aaa; border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 6px; margin-bottom: 4px; margin-top: 8px;
+  }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>Edit Turf</h2>
+      <p><a href="/">Home</a> / <a href="/turflist">My Turfs</a> / Edit</p>
+    </div>
+  </div>
+</section>
+
+<section class="w3l-booking-top">
+  <div class="booking-form-61 p-5">
+    <div class="container">
+      <div class="booking-top-gds">
+
+        <!-- Left info -->
+        <div class="booking-forms-16-info align-self">
+          <h5>Manager Panel</h5>
+          <h3 class="title-big">Update your turf listing to keep it accurate and attractive for players.</h3>
+          <p style="margin-top:14px;color:#bbb;font-size:0.9rem;">Changes will be reflected immediately on your listing.</p>
+        </div>
+
+        <!-- Right form -->
+        <div class="form-right-inf">
+          <div class="booking-form-content">
+            <h6>Edit: {{ turfdata.name }}</h6>
+
+            {% if messages %}
+            <div style="margin-bottom:12px;">
+              {% for message in messages %}
+              <div style="background:{% if message.tags == 'error' %}#ffe0e0{% else %}#e0ffe8{% endif %};border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:6px;color:{% if message.tags == 'error' %}#c0392b{% else %}#1e7a3d{% endif %};">
+                {{ message }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <form action="/updateturf/{{ turfdata.id }}" method="post" enctype="multipart/form-data" id="editTurfForm" class="book-depature-6" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="manager" value="{{ uid }}">
+
+              <div class="d-grid grid-col-2">
+
+                <!-- ── Basic Info ── -->
+                <div class="field-section-title">Basic Information</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Turf Name *</h5>
+                  <input type="text" name="name" id="f-name" value="{{ turfdata.name }}" required>
+                  <span class="error-msg" id="e-name"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Category *</h5>
+                  <select name="category" id="f-cat" required>
+                    <option value="{{ turfdata.category.id }}" selected>{{ turfdata.category.cate_name }}</option>
+                    {% for cat in categories %}
+                    {% if cat.id != turfdata.category.id %}
+                    <option value="{{ cat.id }}">{{ cat.cate_name }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  <h5>Description *</h5>
+                  <textarea name="description" id="f-desc" rows="3" required>{{ turfdata.description }}</textarea>
+                  <span class="error-msg" id="e-desc"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Location *</h5>
+                  <select name="location" id="f-loc" required>
+                    <option value="{{ turfdata.location.id }}" selected>{{ turfdata.location.area_name }}</option>
+                    {% for loc in locations %}
+                    {% if loc.id != turfdata.location.id %}
+                    <option value="{{ loc.id }}">{{ loc.area_name }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- ── Contact ── -->
+                <div class="field-section-title">Contact Details</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Contact Number *</h5>
+                  <input type="text" name="contact_number" id="f-phone"
+                    value="{{ turfdata.contact_number }}" maxlength="10" required>
+                  <span class="error-msg" id="e-phone"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Contact Email *</h5>
+                  <input type="email" name="contact_email" id="f-email"
+                    value="{{ turfdata.contact_email }}" required>
+                  <span class="error-msg" id="e-email"></span>
+                </div>
+
+                <!-- ── Pricing ── -->
+                <div class="field-section-title">Pricing & Capacity</div>
+
+                <div class="hny-frm_grid">
+                  <h5>Price Per Slot (₹) *</h5>
+                  <input type="number" name="price_per_slot" id="f-price"
+                    value="{{ turfdata.price_per_slot }}" min="1" required>
+                  <span class="error-msg" id="e-price"></span>
+                </div>
+
+                <div class="hny-frm_grid">
+                  <h5>Max Capacity *</h5>
+                  <input type="number" name="maximum_capacity" id="f-cap"
+                    value="{{ turfdata.maximum_capacity }}" min="1" required>
+                  <span class="error-msg" id="e-cap"></span>
+                </div>
+
+                <!-- ── Image ── -->
+                <div class="field-section-title">Turf Image <span class="opt-tag">Optional – leave blank to keep current</span></div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  {% if turfdata.image %}
+                  <p style="font-size:12px;color:#888;margin-bottom:6px;">Current image:</p>
+                  <img src="{{ turfdata.image.url }}" alt="Current" class="current-img">
+                  {% endif %}
+                  <label for="imgInput" class="img-upload-label">
+                    <span class="fa fa-cloud-upload-alt" style="font-size:1.6rem;color:#ccc;"></span>
+                    Click to upload a new photo (replaces current)
+                    <span>JPG, PNG or WEBP · max 5 MB</span>
+                  </label>
+                  <input type="file" name="image" id="imgInput" accept="image/*" style="display:none" onchange="prevImg(this)">
+                  <img id="imgPreview" src="" alt="Preview">
+                </div>
+
+                <!-- ── Rules ── -->
+                <div class="field-section-title">Rules & Regulations <span class="opt-tag">Optional</span></div>
+
+                <div class="hny-frm_grid" style="grid-column: 1 / -1;">
+                  <textarea name="rules" placeholder="e.g. No smoking, proper shoes required…" rows="3">{{ turfdata.rules_and_regulations }}</textarea>
+                </div>
+
+              </div><!-- /d-grid -->
+
+              <div id="formSubmitError" class="submit-error">Please fix the errors above before submitting.</div>
+
+              <button type="submit" class="btn btn-style btn-secondary book mt-3" style="width:100%;">
+                Save Changes
+              </button>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function prevImg(input) {
+    if (input.files && input.files[0]) {
+      var r = new FileReader();
+      r.onload = function(e) {
+        var img = document.getElementById('imgPreview');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      r.readAsDataURL(input.files[0]);
+    }
+  }
+
+  document.getElementById('editTurfForm').addEventListener('submit', function(e) {
+    var ok = true;
+
+    function v(id, errId, msg, cond) {
+      var el = document.getElementById(id);
+      var er = document.getElementById(errId);
+      if (!el || !er) return;
+      if (cond(el)) { er.textContent = msg; ok = false; }
+      else           { er.textContent = ''; }
+    }
+
+    v('f-name',  'e-name',  'At least 3 characters required.',   function(el){ return el.value.trim().length < 3; });
+    v('f-desc',  'e-desc',  'At least 10 characters required.',  function(el){ return el.value.trim().length < 10; });
+    v('f-phone', 'e-phone', 'Enter exactly 10 digits.',          function(el){ return !/^\d{10}$/.test(el.value.trim()); });
+    v('f-email', 'e-email', 'Enter a valid email address.',      function(el){ return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()); });
+    v('f-price', 'e-price', 'Enter a positive price.',           function(el){ return !el.value || parseInt(el.value) <= 0; });
+    v('f-cap',   'e-cap',   'Enter a positive capacity.',        function(el){ return !el.value || parseInt(el.value) <= 0; });
+
+    if (!ok) {
+      e.preventDefault();
+      document.getElementById('formSubmitError').style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  });
+</script>
+
+{% endblock %}

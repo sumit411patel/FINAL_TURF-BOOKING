@@ -1,0 +1,52 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Users & Managers{% endblock %}
+{% block nav_users %}active{% endblock %}
+{% block page_title %}Users & Managers{% endblock %}
+{% block breadcrumb %}Users{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="section-head">
+    <h4>All Registered Users & Managers ({{ users|length }})</h4>
+  </div>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>#</th><th>Name</th><th>Email</th><th>Phone</th>
+        <th>Role</th><th>Status</th><th>Ban / Unban</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><strong>{{ u.name }}</strong></td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.phone_number|default:"—" }}</td>
+        <td>
+          <span class="badge {% if u.user_type == 'manager' %}badge-info{% else %}badge-muted{% endif %}">
+            {{ u.user_type }}
+          </span>
+        </td>
+        <td>
+          {% if u.is_banned %}
+          <span class="badge badge-danger"><span class="fa fa-ban"></span> Banned</span>
+          {% else %}
+          <span class="badge badge-success"><span class="fa fa-check"></span> Active</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="/myadmin/users/ban/{{ u.id }}"
+             class="btn-adm btn-sm-adm {% if u.is_banned %}btn-primary-adm{% else %}btn-danger-adm{% endif %}"
+             onclick="return confirm('{% if u.is_banned %}Unban{% else %}Ban{% endif %} {{ u.name }}?')">
+            <span class="fa {% if u.is_banned %}fa-unlock{% else %}fa-ban{% endif %}"></span>
+            {% if u.is_banned %}Unban{% else %}Ban{% endif %}
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7"><div class="empty-adm"><span class="fa fa-users"></span><p>No users found.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

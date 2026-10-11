@@ -1,0 +1,128 @@
+{% extends 'base.html'%}
+{%block title%} My Payments {%endblock%}
+
+{%block main%}
+{% load static %}
+
+<style>
+    /* ── Empty State ─────────────────────────────── */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+    .empty-state img {
+        width: 260px;
+        max-width: 80%;
+        margin-bottom: 28px;
+        opacity: 0.85;
+    }
+    .empty-state h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #3a3a3a;
+        margin-bottom: 10px;
+    }
+    .empty-state p {
+        color: #7a7a7a;
+        font-size: 1rem;
+        margin-bottom: 24px;
+    }
+    .empty-state .btn-book {
+        background: #19875400;
+        border: 2px solid #198754;
+        color: #198754;
+        padding: 10px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .empty-state .btn-book:hover {
+        background: #198754;
+        color: #fff;
+    }
+</style>
+
+<!-- //w3l-header -->
+<section class="w3l-breadcrumb">
+    <div class="breadcrum-bg py-sm-5 py-4">
+        <div class="container py-lg-3">
+            <h2>My Payments</h2>
+            <p><a href="/index">Home</a> / My Payments History</p>
+        </div>
+    </div>
+</section>
+
+<div class="container p-5">
+    <h2 class="mb-4">My Payment History</h2>
+
+    {% if paymentdata %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Turf Name</th>
+                <th scope="col">Time Slot</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Payment Method</th>
+                <th scope="col">Transaction Id</th>
+                <th scope="col">Pay Time</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for payment in paymentdata %}
+            <tr>
+                <td>{{ payment.booking.turf.name }}</td>
+                <td>{{ payment.booking.slot}}</td>
+                <td>{{ payment.amount }}</td>
+                <td>{{ payment.payment_method }}</td>
+                <td>{{ payment.transaction_id }}</td>
+                <td>{{ payment.payment_date_time }}</td>
+                <td>{{ payment.payment_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination links -->
+    <div class="pagination ml-5 mt-5">
+        <span class="step-links">
+            <span class="current">
+                Page {{ paymentdata.number }} of {{ paymentdata.paginator.num_pages }}.
+            </span>
+
+            {% if paymentdata.has_previous %}
+            <a href="?page=1" class="btn btn-secondary active">&laquo;</a>
+            {% endif %}
+
+            {% for i in paymentdata.paginator.page_range %}
+            <span class="{% if paymentdata.number == i %}current{% endif %}">
+                <a href="?page={{ i }}" class="btn btn-secondary active">{{ i }}</a>
+            </span>
+            {% endfor %}
+
+            {% if paymentdata.has_next %}
+            <a href="?page={{ paymentdata.paginator.num_pages }}" class="btn btn-secondary active">&raquo;</a>
+            {% endif %}
+
+        </span>
+    </div>
+
+    {% else %}
+    <!-- ── Empty State ─────────────────────────── -->
+    <div class="empty-state">
+        <span class="fa fa-credit-card" style="font-size: 48px; color: #198754; margin-bottom: 24px;"></span>
+        <h4>No Payment Records Found!</h4>
+        <p>You don't have any payment history yet. Book a turf and complete a payment to see it here.</p>
+        <a href="/userturflist" class="btn-book">Book a Turf</a>
+    </div>
+    {% endif %}
+
+    <div></div>
+</div>
+{%endblock%}

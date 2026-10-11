@@ -1,0 +1,125 @@
+{% extends 'base.html'%}
+{% block title %} My Turfs {% endblock %}
+{% block main %}
+{% load static %}
+
+<style>
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 70px 20px; text-align: center;
+  }
+  .empty-state .empty-icon { font-size: 4.5rem; color: #ced4da; margin-bottom: 18px; }
+  .empty-state h5 { font-weight: 700; color: #495057; font-size: 1.4rem; margin-bottom: 8px; }
+  .empty-state p  { color: #6c757d; font-size: 0.95rem; margin-bottom: 24px; }
+  .btn-add-turf {
+    background: #198754; color: #fff; border-radius: 30px;
+    padding: 10px 30px; font-weight: 600; text-decoration: none;
+    transition: all 0.2s ease; display: inline-block;
+  }
+  .btn-add-turf:hover { background: #157347; color: #fff; text-decoration: none; }
+  .status-badge {
+    display: inline-block; border-radius: 20px; padding: 3px 12px;
+    font-size: 0.78rem; font-weight: 700; text-transform: capitalize;
+  }
+  .status-available   { background: #d1fae5; color: #065f46; }
+  .status-unavailable { background: #fee2e2; color: #991b1b; }
+</style>
+
+<section class="w3l-breadcrumb">
+  <div class="breadcrum-bg py-sm-5 py-4">
+    <div class="container py-lg-3">
+      <h2>My Turfs</h2>
+      <p><a href="/index">Home</a> / My Turfs</p>
+    </div>
+  </div>
+</section>
+
+<div class="container p-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">My Turfs</h2>
+    <a href="/addturfpage" class="btn-add-turf"><span class="fa fa-plus" style="margin-right:6px;"></span>Add New Turf</a>
+  </div>
+
+  {% if turfdata %}
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Max Capacity</th>
+        <th>Contact</th>
+        <th>Price / Slot</th>
+        <th>Status</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in turfdata %}
+      <tr>
+        <td><strong>{{ t.name }}</strong></td>
+        <td>{{ t.location.area_name }}</td>
+        <td>{{ t.maximum_capacity }}</td>
+        <td>{{ t.contact_number }}</td>
+        <td>&#8377;{{ t.price_per_slot }}</td>
+        <td>
+          <span class="status-badge {% if t.is_available == 'available' %}status-available{% else %}status-unavailable{% endif %}">
+            {{ t.is_available }}
+          </span>
+        </td>
+        <td class="text-center">
+          <a href="/editturf/{{ t.id }}" class="btn btn-sm btn-outline-secondary mr-1" title="Edit">
+            <i class="fa fa-edit"></i>
+          </a>
+          <button type="button" class="btn btn-sm btn-outline-danger"
+            data-toggle="modal" data-target="#deleteModal{{ t.id }}" title="Remove">
+            <i class="fa fa-trash"></i>
+          </button>
+
+          <!-- Delete Modal -->
+          <div class="modal fade" id="deleteModal{{ t.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger"><i class="fa fa-exclamation-triangle mr-2"></i>Remove Turf</h5>
+                  <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to remove <strong>{{ t.name }}</strong>? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <a href="/removeturf/{{ t.id }}" class="btn btn-danger">Yes, Remove</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination ml-1 mt-4">
+    <span class="step-links">
+      <span class="current">Page {{ turfdata.number }} of {{ turfdata.paginator.num_pages }}.</span>
+      {% if turfdata.has_previous %}<a href="?page=1" class="btn btn-sm btn-secondary active ml-2">&laquo;</a>{% endif %}
+      {% for i in turfdata.paginator.page_range %}
+      <a href="?page={{ i }}" class="btn btn-sm btn-secondary active ml-1 {% if turfdata.number == i %}disabled{% endif %}">{{ i }}</a>
+      {% endfor %}
+      {% if turfdata.has_next %}<a href="?page={{ turfdata.paginator.num_pages }}" class="btn btn-sm btn-secondary active ml-1">&raquo;</a>{% endif %}
+    </span>
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <div class="empty-icon"><span class="fa fa-th-large"></span></div>
+    <h5>No Turfs Yet</h5>
+    <p>You haven't added any turfs. Click the button below to list your first turf.</p>
+    <a href="/addturfpage" class="btn-add-turf"><span class="fa fa-plus" style="margin-right:8px;"></span>Add Your First Turf</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}All Turfs{% endblock %}
+{% block nav_turfs %}active{% endblock %}
+{% block page_title %}All Turfs{% endblock %}
+{% block breadcrumb %}Turfs{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="section-head"><h4>All Turfs ({{ turfs|length }})</h4></div>
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Image</th><th>Name</th><th>Manager</th><th>Category</th><th>Location</th><th>Price/Slot</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for t in turfs %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>
+          {% if t.image %}
+          <img src="{{ t.image.url }}" style="width:55px;height:40px;object-fit:cover;border-radius:6px;">
+          {% else %}<span style="color:#ccc;">No img</span>{% endif %}
+        </td>
+        <td><strong>{{ t.name }}</strong></td>
+        <td>{{ t.manager.name }}</td>
+        <td>{{ t.category.cate_name }}</td>
+        <td>{{ t.location.area_name }}</td>
+        <td>₹{{ t.price_per_slot }}</td>
+        <td>
+          <span class="badge {% if t.is_available == 'available' %}badge-success{% else %}badge-danger{% endif %}">
+            {{ t.is_available }}
+          </span>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8"><div class="empty-adm"><span class="fa fa-soccer-ball-o"></span><p>No turfs found.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

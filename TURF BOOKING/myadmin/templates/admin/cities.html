@@ -1,0 +1,55 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Cities{% endblock %}
+{% block nav_cities %}active{% endblock %}
+{% block page_title %}Cities{% endblock %}
+{% block breadcrumb %}Cities{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;">
+
+  <div class="form-card">
+    <h4>{% if edit_city %}<span class="fa fa-edit"></span> Edit City{% else %}<span class="fa fa-plus"></span> Add City{% endif %}</h4>
+    <form method="post" action="{% if edit_city %}/myadmin/cities/edit/{{ edit_city.id }}{% else %}/myadmin/cities/add{% endif %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>State *</label>
+        <select class="form-control-adm" name="state_id" required>
+          <option value="">— Select State —</option>
+          {% for s in states %}
+          <option value="{{ s.id }}" {% if edit_city and edit_city.state_name.id == s.id %}selected{% endif %}>{{ s.state_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>City Name *</label>
+        <input class="form-control-adm" type="text" name="city_name" value="{% if edit_city %}{{ edit_city.city_name }}{% endif %}" placeholder="e.g. Mumbai" required>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn-adm btn-primary-adm">{% if edit_city %}Update{% else %}Add City{% endif %}</button>
+        {% if edit_city %}<a href="/myadmin/cities" class="btn-adm btn-warning-adm">Cancel</a>{% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><h4>All Cities ({{ cities|length }})</h4></div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>City</th><th>State</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for c in cities %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ c.city_name }}</td>
+          <td>{{ c.state_name.state_name }}</td>
+          <td style="white-space:nowrap;">
+            <a href="/myadmin/cities/edit/{{ c.id }}" class="btn-adm btn-warning-adm btn-sm-adm"><span class="fa fa-edit"></span></a>
+            <a href="/myadmin/cities/delete/{{ c.id }}" class="btn-adm btn-danger-adm btn-sm-adm" onclick="return confirm('Delete this city?')"><span class="fa fa-trash"></span></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4"><div class="empty-adm"><span class="fa fa-building"></span><p>No cities added yet.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

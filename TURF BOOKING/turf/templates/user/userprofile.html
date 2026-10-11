@@ -1,0 +1,72 @@
+{% extends 'base.html'%}
+{%block title%} User Profile {%endblock%}
+
+{%block main%}
+{% load static %}
+
+<section class="w3l-breadcrumb">
+    <div class="breadcrum-bg py-sm-5 py-4">
+        <div class="container py-lg-3">
+            <h3>User Profile</h3>
+            <p><a href="/">Home</a> /  Profile</p>
+        </div>
+    </div>
+</section>
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-xl-12 col-md-12">
+                <div class="card user-card-full">
+                    <div class="row m-l-0 m-r-0">
+                        <div class="col-sm-3  user-profile">
+                            <div class="card-block text-center text-white">
+                                <div class="m-b-25">
+                                    <img src="{{profiledata.profile_pic.url}}" class="img-radius mx-auto"
+                                        alt="User-Profile-Image" width="80%">
+                                </div>
+                                <h6 class="f-w-600"></h6>
+                                <h3>{{userdata.name}}</h3>
+                                <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="card-block">
+                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Email</p>
+                                        <h6 class="text-muted f-w-400"><a href="mailto:{{userdata.email}}" class="mail">{{userdata.email}}</a></h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Phone</p>
+                                        <h6 class="text-muted f-w-400"><a href="tel:+{{userdata.phone_number}}">{{userdata.phone_number}}</a></h6>
+                                    </div>
+                                </div>
+                                <h6 class="m-b-20 m-t-40 b-b-default mt-5 f-w-600">Personal Info</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Date of birth</p>
+                                        <h6 class="text-muted f-w-400">{{profiledata.dob}}</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">address</p>
+                                        <h6 class="text-muted f-w-400">{{profiledata.address | slice:30 }}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2 mb-4">
+                    <div class="col-12 text-center">
+                      <a href="/edituserprofile" class="btn btn-secondary p-2 mr-3 mr-lg-2"><span class="text-light font-weight-bold">Edit Profile</span></a>
+                      <a href="/changepwdpage" class="btn btn-secondary p-2 mr-3"><span class="text-light font-weight-bold">Change Password</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

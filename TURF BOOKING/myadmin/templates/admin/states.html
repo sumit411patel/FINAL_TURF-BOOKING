@@ -1,0 +1,49 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}States{% endblock %}
+{% block nav_states %}active{% endblock %}
+{% block page_title %}States{% endblock %}
+{% block breadcrumb %}States{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start;">
+
+  <!-- Add / Edit Form -->
+  <div class="form-card">
+    <h4>{% if edit_state %}<span class="fa fa-edit"></span> Edit State{% else %}<span class="fa fa-plus"></span> Add State{% endif %}</h4>
+    <form method="post" action="{% if edit_state %}/myadmin/states/edit/{{ edit_state.id }}{% else %}/myadmin/states/add{% endif %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>State Name *</label>
+        <input class="form-control-adm" type="text" name="state_name" value="{% if edit_state %}{{ edit_state.state_name }}{% endif %}" placeholder="e.g. Maharashtra" required>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn-adm btn-primary-adm">{% if edit_state %}Update{% else %}Add State{% endif %}</button>
+        {% if edit_state %}<a href="/myadmin/states" class="btn-adm btn-warning-adm">Cancel</a>{% endif %}
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="section-card">
+    <div class="section-head">
+      <h4>All States ({{ states|length }})</h4>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>State Name</th><th class="text-right">Actions</th></tr></thead>
+      <tbody>
+        {% for s in states %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ s.state_name }}</td>
+          <td style="white-space:nowrap;">
+            <a href="/myadmin/states/edit/{{ s.id }}" class="btn-adm btn-warning-adm btn-sm-adm"><span class="fa fa-edit"></span></a>
+            <a href="/myadmin/states/delete/{{ s.id }}" class="btn-adm btn-danger-adm btn-sm-adm" onclick="return confirm('Delete this state?')"><span class="fa fa-trash"></span></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3"><div class="empty-adm"><span class="fa fa-map"></span><p>No states added yet.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
