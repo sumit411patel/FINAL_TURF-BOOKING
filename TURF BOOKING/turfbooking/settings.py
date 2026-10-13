@@ -26,13 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7r3f7*m4oqeqby%ox7)#-(4x-(lmp+&(&t&8qojv_e!_1u)x$2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','final-turf-booking.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'final-turf-booking.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://final-turf-booking.onrender.com",
     "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
 
 
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -58,7 +60,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'turf.middleware.AdminAccessRestrictionMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 STORAGES = {
@@ -69,6 +70,8 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+WHITENOISE_MANIFEST_STRICT = False
 ROOT_URLCONF = 'turfbooking.urls'
 
 TEMPLATES = [
