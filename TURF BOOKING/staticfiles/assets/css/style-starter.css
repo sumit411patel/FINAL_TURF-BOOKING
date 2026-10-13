@@ -9846,7 +9846,7 @@ h3.title-big {
   -ms-transition: 0.3s ease-in; }
 
 .w3l-main-slider .banner-view {
-  background: url(../images/slide1.jpg) no-repeat center;
+  background: url(../images/football1.jpg) no-repeat center;
   background-size: cover;
   min-height: 700px;
   position: relative;
@@ -9855,15 +9855,7 @@ h3.title-big {
   align-items: center; }
 
 .w3l-main-slider .banner-top1 {
-  background: url(../images/slide2.jpg) no-repeat center;
-  background-size: cover; }
-
-.w3l-main-slider .banner-top2 {
-  background: url(../images/slide3.jpg) no-repeat center;
-  background-size: cover; }
-
-.w3l-main-slider .banner-top3 {
-  background: url(../images/slide4.jpg) no-repeat center;
+  background: url(../images/football2.jpg) no-repeat center;
   background-size: cover; }
 
 .w3l-main-slider .banner-view:before {
@@ -10051,7 +10043,7 @@ h3.title-big {
   top: 50%;
   margin-left: -40px;
   margin-top: -40px;
-  background: url(owl.video.play.png) no-repeat;
+  background: url(owl.video.play.html) no-repeat;
   cursor: pointer;
   z-index: 1;
   -webkit-backface-visibility: hidden;
@@ -11231,7 +11223,7 @@ div#small-dialog iframe {
 
 .w3-about-2 .w3-services-ab {
   background-size: cover;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), black), url(../images/slide1.jpg);
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), black), url(../images/football1.jpg);
   background-repeat: no-repeat, no-repeat, no-repeat; }
 
 .w3-about-2 .fea-gd-vv h5 {
@@ -11713,5 +11705,3 @@ button.btn-contact:hover {
 
 /* / contact1-responsive */
 /* /contact1 */
-
-/*# sourceMappingURL=style-starter.css.map */
