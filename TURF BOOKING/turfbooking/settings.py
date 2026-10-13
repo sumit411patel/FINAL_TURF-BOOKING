@@ -58,8 +58,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'turf.middleware.AdminAccessRestrictionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 ROOT_URLCONF = 'turfbooking.urls'
 
 TEMPLATES = [
