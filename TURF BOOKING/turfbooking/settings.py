@@ -28,7 +28,12 @@ SECRET_KEY = 'django-insecure-7r3f7*m4oqeqby%ox7)#-(4x-(lmp+&(&t&8qojv_e!_1u)x$2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','final-turf-booking.onrender.com']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://final-turf-booking.onrender.com",
+    "http://127.0.0.1:8000",
+]
 
 
 # Application definition
