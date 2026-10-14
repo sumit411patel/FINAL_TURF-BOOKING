@@ -114,7 +114,9 @@
                 <div class="maghny-grid">
                     <figure class="effect-lily">
                         {% if t.image %}
-                            <img class="img-fluid" src="{{ t.image.url }}" alt="{{ t.name }}" style="height:250px;object-fit:cover;">
+                            <img class="img-fluid" src="{{ t.image.url }}" alt="{{ t.name }}" style="height:250px;object-fit:cover;" onerror="this.onerror=null;this.src='{% static 'assets/images/cricket.jpg' %}';">
+                        {% else %}
+                            <img class="img-fluid" src="{% static 'assets/images/cricket.jpg' %}" alt="{{ t.name }}" style="height:250px;object-fit:cover;">
                         {% endif %}
                         <figcaption class="mb-5">
                             <div>

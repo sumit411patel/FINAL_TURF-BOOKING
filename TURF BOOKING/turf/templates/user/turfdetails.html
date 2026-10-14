@@ -39,7 +39,11 @@
                         <ul class="banner_slide_bg">
                         {% if turfdata.image %}
                             <li>
-                                <img class="img" src="{{ turfdata.image.url }}" alt="{{ turfdata.name }}" style="height:400px;object-fit:cover;width:100%;">
+                                <img class="img" src="{{ turfdata.image.url }}" alt="{{ turfdata.name }}" style="height:400px;object-fit:cover;width:100%;" onerror="this.onerror=null;this.src='{% static 'assets/images/cricket.jpg' %}';">
+                            </li>
+                        {% else %}
+                            <li>
+                                <img class="img" src="{% static 'assets/images/cricket.jpg' %}" alt="{{ turfdata.name }}" style="height:400px;object-fit:cover;width:100%;">
                             </li>
                         {% endif %}
                         </ul>
